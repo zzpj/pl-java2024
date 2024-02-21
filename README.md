@@ -16,7 +16,7 @@ Lp | Temat | Data | Prowadzący | Uwagi
 1 | Wprowadzenie: Git/Maven/Github Actions | 28.02.2024 | . |
 2 | IntelliJ Wizards | 6.03.2024 | . |
 3 | Unit Testing  | 13.03.2024 | . | 
-4 | JDK Update v8-17 | 20.03.2024 | . |
+4 | JDK Updates 8-21 | 20.03.2024 | . |
 5 | Project concept | 27.03.2024 | ZN+MD+ŁCh | Zapisy na sloty czasowe są dostępne na platformie WIKAMP
 6 | - | 10.04.2024 | . | 
 7 | Clean Code + SOLID | 17.04.2024 |.| 
