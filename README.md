@@ -13,27 +13,27 @@
 ### Ramowy plan zajęć: 
 Lp | Temat | Data | Prowadzący | Uwagi
 --- | --- | --- | --- | --- 
-1 | Wprowadzenie: Git/Maven/Github Actions | 28.02.2024 | . |
-2 | IntelliJ Wizards | 6.03.2024 | . |
-3 | Unit Testing  | 13.03.2024 | . | 
-4 | JDK Updates 8-21 | 20.03.2024 | . |
-5 | Project concept | 27.03.2024 | ZN+MD+ŁCh | Zapisy na sloty czasowe są dostępne na platformie WIKAMP
-6 | - | 10.04.2024 | . | 
-7 | Clean Code + SOLID | 17.04.2024 |.| 
-8 | Współbieżność | 24.04.2024 | . |
-9 | Spring 101 | 8.05.2024 |.|
-10 | Spring 102 | 15.05.2024 |.|
+1 | Wprowadzenie: Git/Maven/Github (Actions) | 28.02.2024 | ZN+MD |
+2 | IntelliJ Wizards | 6.03.2024 | MD |
+3 | Unit Testing  | 13.03.2024 | ZN+ŁCh | Testy parametryczne (Junit5) + Mocki (JMockito) + Cucumber 
+4 | Project concept | 20.03.2024 | ZN+MD+ŁCh | Zapisy na sloty czasowe są dostępne na platformie WIKAMP
+5 | JDK Updates 8-21 | 27.03.2024 | ZN |
+6 | LM Studio (AI w Javie) | 10.04.2024 | ŁCh | 
+7 | Spring 101 | 17.04.2024 | (MD) |
+9 | Spring 102 | 24.04.2024 | (MD) |
+9 | Clean Code + SOLID + Statyczna analiza kodu | 8.05.2024 |(ZN) + Łch | 
+10 | Współbieżność | 15.05.2024 | ŁCh |
 11 | Middle project check | 22.05.2024 | ZN+MD+ŁCh | Zapisy na sloty czasowe są dostępne na platformie WIKAMP
-12 | Microservices Basis | 29.05.2024 |.| 
-13 | Microservices Advanced | 5.06.2024 |.|
-14 | Event sourcing | 12.06.2024 | . |
+12 | Microservices Basis | 29.05.2024 | ZN | 
+13 | Microservices Advanced | 5.06.2024 | ZN |
+14 | temat z propozycji | 12.06.2024 | . |
 15 | Final project check | 19.06.2024 | ZN+MD+ŁCh | Zapisy na sloty czasowe są dostępne na platformie WIKAMP
 
-### Tematy na wymianę:
+### Tematy propozycje:
 - Design Patterns (w miejsce event sourcingu)
-- Współbieżność w Javie (projekt Loom)
 - Java Profiling
 - JWT + OAuth
+- Event sourcing
 
 ### Zaliczenie:
 - Projekt grupowy (3-6 osób)
