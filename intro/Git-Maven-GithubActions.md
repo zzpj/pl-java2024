@@ -48,5 +48,3 @@
   - [create simple unit test (so your workflow needs to run tests)](https://octopus.com/blog/githubactions-running-unit-tests)
   - [setup "secret" for keeping passwords and use it on your workflow](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
   - [add workflow status badge](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/adding-a-workflow-status-badge)
-
-[code snippets from class](https://github.com/zzpj/pl-java2024/blob/main/intro/maven-helpful-snippets.md)
