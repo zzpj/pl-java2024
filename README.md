@@ -20,7 +20,7 @@ Lp | Temat | Data | Prowadzący | Uwagi
 5 | JDK Updates 8-21 | 27.03.2024 | ZN |
 6 | LM Studio (AI w Javie) | 10.04.2024 | ŁCh | 
 7 | Spring 101 | 17.04.2024 | (MD) |
-9 | Spring 102 | 24.04.2024 | (MD) |
+8 | Spring 102 | 24.04.2024 | (MD) |
 9 | Clean Code + SOLID + Statyczna analiza kodu | 8.05.2024 |(ZN) + ŁCh | 
 10 | Współbieżność | 15.05.2024 | ŁCh |
 11 | Middle project check | 22.05.2024 | ZN+MD+ŁCh | Zapisy na sloty czasowe są dostępne na platformie WIKAMP
