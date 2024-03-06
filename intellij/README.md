@@ -1,6 +1,7 @@
 Przydatne materiały:
 - 
 
++ [Pet Clinic Project](https://github.com/spring-projects/spring-petclinic)
 + [IntelliJ IDEA Conf 2024](https://youtu.be/ZD_YxTmQ16Q)
 + [IntelliJ IDEA. Debugger Essentials](https://youtu.be/59RC8gVPlvk)
 + [IntelliJ IDEA. Debugger Advanced](https://www.youtube.com/watch?v=40Og3hTV--k)
