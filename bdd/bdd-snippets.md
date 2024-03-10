@@ -1,26 +1,22 @@
 # BDD Snippets
 
-### Init basic project
+### Basic project
 ````
 mvn archetype:generate                      \
 "-DarchetypeGroupId=io.cucumber"           \
 "-DarchetypeArtifactId=cucumber-archetype" \
 "-DarchetypeVersion=7.15.0"               \
-"-DgroupId=pl.p.lodz"                  \
+"-DgroupId=com.hellocucumber"                  \
 "-DartifactId=hellocucumber"               \
-"-Dpackage=hellocucumber"                  \
+"-Dpackage=com.hellocucumber"                  \
 "-Dversion=1.0.0"                 \
 "-DinteractiveMode=false"
 ````
-
-### cucumber.properties file
-````properties
-cucumber.publish.enabled=true
-cucumber.publish.quiet=true
-````
+### First run
+`mvn test`
 
 ### First test
-* create `stack.feature` file in `src/test/resources/bdd`
+* create `stack.feature`:
 ```gherkin
 Feature: Test stack features
 
@@ -28,6 +24,40 @@ Feature: Test stack features
     Given empty stack is created
     When new element is added to stack
     Then new element is at the top of the stack
+```
+* create `MyStack` class:
+```java
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+public class MyStack<T> {
+
+    private Deque<T> stack;
+
+    public MyStack() {
+        this.stack = new ArrayDeque<>();
+    }
+
+    public void push(T t) {
+        stack.push(t);
+    }
+
+    public T pop() {
+        return stack.pop();
+    }
+
+    public T top() {
+        return stack.peek();
+    }
+
+    public int size() {
+        return stack.size();
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+}
 ```
 * create `StackStepDefinitions` class:
 ```java
@@ -55,8 +85,7 @@ public class StackStepDefinitions {
     }
 }
 ```
-
-### Evaluate passed expressions
+* Add bad scenario:
 ```gherkin
   Scenario: Removing elements from the stack
     Given non-empty stack with 3 elements
@@ -68,7 +97,7 @@ public class StackStepDefinitions {
 ```java
     @Given("non-empty stack with {int} elements")
     public void nonEmptyStackWithElements(int size) {
-
+        unitStack = new MyStack<>();
         unitStack.push("element");
         unitStack.push("element");
         unitStack.push("element");
@@ -95,7 +124,22 @@ public class StackStepDefinitions {
 ```
 
 ### Scenario Outlines
-* create `fizzbuzz.feature` file in `src/test/resources/bdd`:
+* create `FizzBuzzProblem` class:
+```java
+public class FizzBuzzProblem {
+    public String getFizzBuzzNumber(int number) {
+        if (number % 15 == 0) {
+            return "FizzBuzz";
+        } else if (number % 5 == 0) {
+            return "Buzz";
+        } else if (number % 3 == 0) {
+            return "Fizz";
+        }
+        return String.valueOf(number);
+    }
+}
+```
+* create `fizzbuzz.feature` file:
 ```gherkin
 Feature: FizzBuzzProblem
 
@@ -124,8 +168,8 @@ public class FizzBuzzStepDefinitions {
         fizzBuzzProblem = new FizzBuzzProblem();
     }
 
-    @When("^I pass (-?\\d+) through algorithm$")
-    public void iPassThroughAlgorithm(int number) {
+    @When("I pass {int} through algorithm")
+    public void iPassNumberThroughAlgorithm(int number) {
         result = fizzBuzzProblem.getFizzBuzzNumber(number);
     }
 
