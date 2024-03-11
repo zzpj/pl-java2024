@@ -179,7 +179,87 @@ public class FizzBuzzStepDefinitions {
     }
 }
 ```
+### Data tables
+* create `datatable.feature`:
+```gherkin
+  Scenario: Example with data table
+    Given user info data table
+      | username       | email              | secret panel access | first login date | priority level |
+      | admin          | admin@validmail.pl | true                | 01-01-1970       | 10             |
+      | moderator      | mod@validmail.pl   | true                | 01-01-2000       | 8              |
+      | regular_user   | franek@p.lodz.pl   | false               | 01-02-2010       | 5              |
+      | different_user | adam@p.lodz.pl     | false               | 01-02-2010       | 4              |
+      | blocked_user   | ban@validmai       | false               | 01-02-2005       | -1             |
+    Then only 2 users "admin" and "moderator" has access to secret panel
+    And "blocked_user" has invalid mail
+```
+* first implementation with use of `DataTable` object:
+```java
+    @Given("user info data table")
+    public void userDataTable(DataTable dataTable) {
+        List<List<String>> lists = dataTable.asLists();
+        List<Map<String, String>> maps = dataTable.asMaps();
+    }
+```
+* second implementation with use of custom object and `@DataTableType` annotation:
+```java
+record UserInfo(
+            String username,
+            String email,
+            boolean secretPanelAccess,
+            LocalDate firstLogin,
+            int priorityLevel
+    ) {
+    }
 
+    @DataTableType
+    UserInfo userInfoTransform(Map<String, String> entry) {
+        return new UserInfo(
+                entry.get("username"),
+                entry.get("email"),
+                Boolean.parseBoolean(entry.get("secret panel access")),
+                LocalDate.parse(entry.get("first login date"), DateTimeFormatter.ofPattern("dd-MM-yyyy")),
+                Integer.parseInt(entry.get("priority level"))
+        );
+    }
+
+
+    List<UserInfo> userInfos;
+
+    @Given("user info data table")
+    public void userInfosCustomObject(List<UserInfo> userInfos) {
+        assertFalse(userInfos.isEmpty());
+        this.userInfos = userInfos;
+    }
+
+
+    @Then("only {int} users {string} and {string} has access to secret panel")
+    public void onlyUsersAndHasAccessToSecretPanel(int numberOfUsers, String firstUser, String secondUser) {
+
+        List<String> list = this.userInfos.stream()
+                .filter(e -> e.secretPanelAccess)
+                .map(e -> e.username)
+                .toList();
+        assertEquals(numberOfUsers, list.size());
+        assertEquals(list, List.of(firstUser, secondUser));
+    }
+
+    @And("{string} has invalid mail")
+    public void hasInvalidMail(String username) {
+
+        String actual = this.userInfos.stream()
+                .filter(e -> !isValidEmail(e.email))
+                .map(e -> e.username)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Not found user"));
+        assertEquals(username, actual);
+
+    }
+
+    private boolean isValidEmail(String email) {
+        return Pattern.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", email);
+    }
+```
 ### Localization
 > https://cucumber.io/docs/gherkin/languages/
 
