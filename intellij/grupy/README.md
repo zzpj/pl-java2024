@@ -48,3 +48,9 @@ Grupa 8:
 + Jakub Olejniczak 242484
 + Michał Kaźmierski 242421
 + Tomasz Zając 242571
+
+Grupa 9:
+Bartosz Kwieciński 242449
+Kacper Czernik 242371
+Mateusz Grzeszczak 242398
+Adam Rosiak 242511
