@@ -61,3 +61,9 @@ Adam Karaszewski 242415
 Marcin Strzelec 242540
 Miłosz Urbaniak 242558
 Wadim Janikowski 242406
+
+Grupa 11:
+Piotr Płeska 242499
+Adam Przybylski 242506
+Kamil Cieślak 242369
+Maciej Wilczyński 242560
