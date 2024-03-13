@@ -42,3 +42,9 @@ Aleksander Janicki 242405
 Artur Grzybek 242399
 Michalina Wysocka 230043
 Michał Ferdzyn 242383
+
+Grupa 8:
++ Krzysztof Deka 242377
++ Jakub Olejniczak 242484
++ Michał Kaźmierski 242421
++ Tomasz Zając 242571
