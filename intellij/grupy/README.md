@@ -36,3 +36,9 @@ Michał Piestrzeniewicz 242493
 Bartłomiej Kałach 242414
 Piotr Kwiatkowski 242447
 Jakub Kozielski 242438
+
+Grupa 7:
+Aleksander Janicki 242405
+Artur Grzybek 242399
+Michalina Wysocka 230043
+Michał Ferdzyn 242383
