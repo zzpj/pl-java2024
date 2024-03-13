@@ -54,3 +54,10 @@ Bartosz Kwieciński 242449
 Kacper Czernik 242371
 Mateusz Grzeszczak 242398
 Adam Rosiak 242511
+
+Grupa 10:
+Grupa Dragon Sector:
+Adam Karaszewski 242415
+Marcin Strzelec 242540
+Miłosz Urbaniak 242558
+Wadim Janikowski 242406
