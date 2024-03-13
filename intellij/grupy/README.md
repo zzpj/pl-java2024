@@ -30,3 +30,9 @@ Artur Włodarczyk 242564
 Wojciech Stobiński 242538
 Jakub Stępnicki 242537
 Wojciech Żyndul 242575
+
+Grupa 6:
+Michał Piestrzeniewicz 242493
+Bartłomiej Kałach 242414
+Piotr Kwiatkowski 242447
+Jakub Kozielski 242438
