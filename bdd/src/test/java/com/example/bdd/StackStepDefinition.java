@@ -1,3 +1,5 @@
+package com.example.bdd;
+
 import com.example.*;
 import io.cucumber.java.*;
 import io.cucumber.java.en.*;

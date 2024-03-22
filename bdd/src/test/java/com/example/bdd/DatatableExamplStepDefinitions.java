@@ -1,3 +1,5 @@
+package com.example.bdd;
+
 import io.cucumber.datatable.*;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.*;
