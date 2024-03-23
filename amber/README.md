@@ -3,11 +3,11 @@
 ![java22-arrival.png](img%2Fjava22-arrival.png)
 Żródło: https://openjdk.org/projects/amber/ 
 
-## Inferencja typów z użyciem `var` (ang. Local-Variable Type Inference (var))
+## Inferencja typów z użyciem `var` (ang. Local-Variable Type Inference `var`)
 Inferencja typów – mechanizm w językach statycznie typowanych, w którym kompilator określa typ danych na podstawie informacji dostępnych w czasie 
 kompilacji, np. typów zadeklarowanych wcześniej lub określania typów na podstawie wartości już znanych zmiennych.
 
-Od jdk10: 
+Od java10: 
 ```java
 var list = new ArrayList<String>();  // infers ArrayList<String>
 var stream = list.stream();          // infers Stream<String>
@@ -32,7 +32,7 @@ var x = { 1 , 2 };
 ```
 
 ## Fabryka niemodyfikowalnych (ang. immutable) kolekcji
-Przed jdk9:
+Przed java9:
 ```java
 List<String> names = new ArrayList<>();
 names.add("aa");
@@ -41,7 +41,7 @@ names.add("cc");
 List<String> unmodifiableList = Collections.unmodifiableList(names);
 unmodifiableList.add("zz");
 ```
-Od jdk9 (przydatne dla kolekcji z małą, niemodyfikowalną liczbą elementów), działa dla `List`, `Set` oraz `Map`:
+Od java9 (przydatne dla kolekcji z małą, niemodyfikowalną liczbą elementów), działa dla `List`, `Set` oraz `Map`:
 ```java
 List<String> newUmodificableList = List.of("aa", "bb", "cc");
 newUmodificableList.add("zz");
@@ -55,13 +55,13 @@ names.add("bb");
 names.add("cc");
 List<String> listFromStream = names.stream().collect(Collectors.toUnmodifiableList());
 listFromStream.add("zzz");
-//From jdk16
+//From java16
 List<String> listFromStream_v2 = names.stream().toList();
 ```
 
 ## Rozwój `Optional`
-Dodanie `orElseThrow`, przed jdk10, należało użyć metody `isPresent`, bo inaczej narażalismy się na wyjątek `NoSuchElementException`
-oraz ostrzeżenie (warning). Po dodaniu "zapach kodu" jest lepszy
+Przed java10, należało użyć metody `isPresent`, bo inaczej narażalismy się na wyjątek `NoSuchElementException`
+oraz ostrzeżenie (warning). Po dodaniu `orElseThrow`, "zapachy kodu" jest lepsze:
 
 ```java
 public static void main(String[] args) {
@@ -83,7 +83,7 @@ private static Optional<String> getResult() {
 ```
 
 ## Uproszczenie skomplikowanego API operacji na plikach
-Wczytywanie i zapisywanie plików (od jdk11):
+Wczytywanie i zapisywanie plików (od java11):
 ```java
 public static void main(String[] args) throws IOException {
 
@@ -116,16 +116,16 @@ boolean blank = "".isBlank();
 boolean blank1 = "  ".isBlank();
 boolean blank2 = "\t\n\r\f ".isBlank();
 
-// intent (jdk12)
+// intent (java12)
 String indent15 = "indent\nplease".indent(15);
 
-// lines (jdk11)
+// lines (java11)
 List<String> list = ("ttt \r www \n qwqq \t bbb").lines().toList();
 
-// transform (jdk12)
+// transform (java12)
 List<String> transformed = "Ola\nKasia\nZosia".transform(e -> e.lines().toList());
 
-// splitWithDelimiters (jdk21)
+// splitWithDelimiters (java21)
 String[] splitWithDelimiters = "Long::brown::curly::hair".splitWithDelimiters("::", 3);
 ```
 ## Bloki tekstowe
@@ -143,7 +143,7 @@ Reprezentacja jsona/sql/xml itp
   }
 }}
 ```
-Przed jdk15:
+Przed java15:
 ```java
 String mrJson = "{\"menu\": {\n" +
         "  \"id\": \"file\",\n" +
@@ -157,9 +157,9 @@ String mrJson = "{\"menu\": {\n" +
         "  }\n" +
         "}}";
 ```
-Po jdk15:
+Po java15:
 ```java
-String mrJsonSinceJdk15 = """
+String mrJsonSincejava15 = """
         {"menu": {
           "id": "file",
           "value": "File",
@@ -172,11 +172,11 @@ String mrJsonSinceJdk15 = """
           }
         }}
         """;
-List<String> list = mrJsonSinceJdk15.lines().toList();
+List<String> list = mrJsonSincejava15.lines().toList();
 ```
 
 ## Dopasowanie wzorca z użyciem `instanceof` (ang. Pattern Matching for `instanceof` )
-Przed jdk16:
+Przed java16:
 ```java
 public static void main(String[] args) {
 
@@ -219,7 +219,7 @@ private static Object getObject() {
 ```
 
 ## Wyrażenie `switch` oraz ewolucja przez kolejne wersje
-Do jdk7 włącznie tylko liczby całkowite (`int`) mogły być używane:
+Do java7 włącznie tylko liczby całkowite (`int`) mogły być używane:
 ```java
 public static void main(String[] args) {
     switchEvolution(5);
@@ -239,7 +239,7 @@ private static void switchEvolution(int value) {
     }
 }
 ```
-Od jdk8 dodano możliwość użycia `String` oraz `enum`
+Od java8 dodano możliwość użycia `String` oraz `enum`
 ```java
 public static void main(String[] args) {
     switchEvolution("Monday");
@@ -274,7 +274,7 @@ private static void switchEvolution(String day) {
     }
 }
 ```
-Od jdk13 mozemy zwrócić bezpośrednio z uzyciem słowa kluczowego `yield` (w jdk12 było to `break`, ale tylko jako preview): 
+Od java13 mozemy zwrócić bezpośrednio z uzyciem słowa kluczowego `yield` (w java12 było to `break`, ale tylko jako preview): 
 ```java
 public static void main(String[] args) {
     System.out.println(switchEvolution("Monday"));
@@ -302,7 +302,7 @@ private static String switchEvolution(String day) {
     };
 }
 ```
-Lub od jdk12 z wykorzystaniem operatora strzałki `->`
+Lub od java12 z wykorzystaniem operatora strzałki `->`
 ```java
 private static String switchEvolution(String day) {
     return switch (day) {
@@ -317,7 +317,7 @@ private static String switchEvolution(String day) {
     };
 }
 ```
-Od jdk12, można było grupować opcje:
+Od java12, można było grupować opcje:
 ```java
     private static String switchEvolution(String day) {
         return switch (day) {
@@ -327,7 +327,7 @@ Od jdk12, można było grupować opcje:
         };
     }
 ```
-Teraz dopiero zaczyna się ból głowy, bo dokładamy "pattern matching"... (dorzucone w jdk17 jako "preview")
+Teraz dopiero zaczyna się ból głowy, bo dokładamy "pattern matching"... (dorzucone w java17 jako "preview")
 ```java
 public static void main(String[] args) {
     switchEvolution("Hello from new switch expression and pattern matching");
@@ -365,11 +365,11 @@ private static void switchEvolution(Object object) {
     }
 }
 ```
-Na początku "łącznikiem" (w jdk17 jako preview) w wyrazeniu `case` na połączenie "pattern matching" oraz "quarded patterns" 
-był `&&` , potem zamieniono na słowo kluczowe `when`. Czy tak się stanie w przypadku `instanceof`? Zobaczymy...
+Na początku "łącznikiem" (w java17 jako preview) w wyrazeniu `case` na połączenie "pattern matching" oraz "quarded patterns" 
+był `&&`, potem zamieniono na słowo kluczowe `when`. Czy tak się stanie w przypadku `instanceof`? Zobaczymy...
 
-## Recordy
-
+## Rekordy
+TODO
 
 ## Klasy `sealed`
-
+TODO
