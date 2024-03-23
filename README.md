@@ -15,7 +15,7 @@ Lp | Temat | Data | Prowadzący | Uwagi
 --- | --- | --- | --- | --- 
 1 | Wprowadzenie: Git/Maven/Github (Actions) | 28.02.2024 | ZN+MD | [Materiały na zajęcia](https://github.com/zzpj/pl-java2024/blob/main/intro/Git-Maven-GithubActions.md)
 2 | IntelliJ Wizards | 6.03.2024 | MD |
-3 | Unit Testing  | 13.03.2024 | ZN+ŁCh | Testy parametryczne (Junit5) + Mocki (JMockito) + [Cucumber-BDD](bdd/bdd.md) 
+3 | Unit Testing  | 13.03.2024 | ZN+ŁCh | Testy parametryczne (Junit5) + Mocki (JMockito) + Cucumber-BDD
 4 | Project concept | 20.03.2024 | ZN+MD+ŁCh | Zapisy na sloty czasowe są dostępne na platformie WIKAMP
 5 | JDK Updates 8-21 | 27.03.2024 | ZN |
 6 | LM Studio (AI w Javie) | 10.04.2024 | ŁCh | 
