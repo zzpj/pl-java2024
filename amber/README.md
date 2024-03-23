@@ -196,7 +196,7 @@ private static Object getObject() {
     return "I am string now";
 }
 ```
-W powyższym snippecie dzieją się aż 3 trzeby
+W powyższym snippecie dzieją się aż 3 rzeczy
 1. testowanie czy `obj` jest typu  `String` lub `Integer`
 2. declarowanie nowych zmiennych `s` lub `i`
 3. kastowanie obiektu na typ `String` lub `Integer`
@@ -218,7 +218,7 @@ private static Object getObject() {
 }
 ```
 
-## wyrażenie `switch` oraz ewolucja przez kolejne wersje
+## Wyrażenie `switch` oraz ewolucja przez kolejne wersje
 Do jdk7 włącznie tylko liczby całkowite (`int`) mogły być używane:
 ```java
 public static void main(String[] args) {
@@ -368,8 +368,8 @@ private static void switchEvolution(Object object) {
 Na początku "łącznikiem" (w jdk17 jako preview) w wyrazeniu `case` na połączenie "pattern matching" oraz "quarded patterns" 
 był `&&` , potem zamieniono na słowo kluczowe `when`. Czy tak się stanie w przypadku `instanceof`? Zobaczymy...
 
-## recordy
+## Recordy
 
 
-## klasy `sealed`
+## Klasy `sealed`
 
