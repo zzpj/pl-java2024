@@ -3,7 +3,7 @@
 ![java22-arrival.png](img%2Fjava22-arrival.png)
 Żródło: https://openjdk.org/projects/amber/ 
 
-## Inferencja typów z użyciem `var` (ang.: Local-Variable Type Inference (var))
+## Inferencja typów z użyciem `var` (ang. Local-Variable Type Inference (var))
 Inferencja typów – mechanizm w językach statycznie typowanych, w którym kompilator określa typ danych na podstawie informacji dostępnych w czasie 
 kompilacji, np. typów zadeklarowanych wcześniej lub określania typów na podstawie wartości już znanych zmiennych.
 
@@ -31,7 +31,7 @@ var x = null;
 var x = { 1 , 2 };
 ```
 
-## Fabryka niemodyfikowalnych (immutable) kolekcji
+## Fabryka niemodyfikowalnych (ang. immutable) kolekcji
 Przed jdk9:
 ```java
 List<String> names = new ArrayList<>();
@@ -47,7 +47,7 @@ List<String> newUmodificableList = List.of("aa", "bb", "cc");
 newUmodificableList.add("zz");
 ```
 
-## Niemutowalne kolekcje zwracane z użyciem `Stream`
+## Niemutowalne kolekcje zwracane z użyciem `stream()`
 ```java
 List<String> names = new ArrayList<>();
 names.add("aa");
@@ -129,9 +129,247 @@ List<String> transformed = "Ola\nKasia\nZosia".transform(e -> e.lines().toList()
 String[] splitWithDelimiters = "Long::brown::curly::hair".splitWithDelimiters("::", 3);
 ```
 ## Bloki tekstowe
+Reprezentacja jsona/sql/xml itp
+```json
+{"menu": {
+  "id": "file",
+  "value": "File",
+  "popup": {
+    "menuitem": [
+      {"value": "New", "onclick": "CreateNewDoc()"},
+      {"value": "Open", "onclick": "OpenDoc()"},
+      {"value": "Close", "onclick": "CloseDoc()"}
+    ]
+  }
+}}
+```
+Przed jdk15:
+```java
+String mrJson = "{\"menu\": {\n" +
+        "  \"id\": \"file\",\n" +
+        "  \"value\": \"File\",\n" +
+        "  \"popup\": {\n" +
+        "    \"menuitem\": [\n" +
+        "      {\"value\": \"New\", \"onclick\": \"CreateNewDoc()\"},\n" +
+        "      {\"value\": \"Open\", \"onclick\": \"OpenDoc()\"},\n" +
+        "      {\"value\": \"Close\", \"onclick\": \"CloseDoc()\"}\n" +
+        "    ]\n" +
+        "  }\n" +
+        "}}";
+```
+Po jdk15:
+```java
+String mrJsonSinceJdk15 = """
+        {"menu": {
+          "id": "file",
+          "value": "File",
+          "popup": {
+            "menuitem": [
+              {"value": "New", "onclick": "CreateNewDoc()"},
+              {"value": "Open", "onclick": "OpenDoc()"},
+              {"value": "Close", "onclick": "CloseDoc()"}
+            ]
+          }
+        }}
+        """;
+List<String> list = mrJsonSinceJdk15.lines().toList();
+```
 
+## Dopasowanie wzorca z użyciem `instanceof` (ang. Pattern Matching for `instanceof` )
+Przed jdk16:
+```java
+public static void main(String[] args) {
 
-## switch
+    Object obj = getObject();
+    if (obj instanceof String) {
+        String s = (String) obj;
+        if (s.length() > 5) {
+            System.out.println(s.toUpperCase());
+        }
+    } else if (obj instanceof Integer) {
+        Integer i = (Integer) obj;
+        System.out.println(i * i);
+    }
+}
+
+private static Object getObject() {
+    return "I am string now";
+}
+```
+W powyższym snippecie dzieją się aż 3 trzeby
+1. testowanie czy `obj` jest typu  `String` lub `Integer`
+2. declarowanie nowych zmiennych `s` lub `i`
+3. kastowanie obiektu na typ `String` lub `Integer`
+
+```java
+public static void main(String[] args) {
+
+    Object obj = getObject();
+    if (obj instanceof String s && s.length() > 5) {
+        System.out.println(s.toUpperCase());
+    } else if (obj instanceof Integer i) {
+        System.out.println(i * i);
+        // note that here `String s` is out of scope
+    }
+}
+
+private static Object getObject() {
+    return "I am string now";
+}
+```
+
+## wyrażenie `switch` oraz ewolucja przez kolejne wersje
+Do jdk7 włącznie tylko liczby całkowite (`int`) mogły być używane:
+```java
+public static void main(String[] args) {
+    switchEvolution(5);
+    switchEvolution(-1);
+}
+
+private static void switchEvolution(int value) {
+    switch (value) {
+        case 1:
+            System.out.println("One");
+            break;
+        case 5:
+            System.out.println("five");
+            break;
+        default:
+            System.out.println("Unknown");
+    }
+}
+```
+Od jdk8 dodano możliwość użycia `String` oraz `enum`
+```java
+public static void main(String[] args) {
+    switchEvolution("Monday");
+    switchEvolution("Sunday");
+}
+
+private static void switchEvolution(String day) {
+    switch (day) {
+        case "Monday":
+            System.out.println("Week day");
+            break;
+        case "Tuesday":
+            System.out.println("Week day");
+            break;
+        case "Wednesday":
+            System.out.println("Week day");
+            break;
+        case "Thursday":
+            System.out.println("Week day");
+            break;
+        case "Friday":
+            System.out.println("Week day");
+            break;
+        case "Saturday":
+            System.out.println("Weekend");
+            break;
+        case "Sunday":
+            System.out.println("Weekend");
+            break;
+        default:
+            System.out.println("Unknown");
+    }
+}
+```
+Od jdk13 mozemy zwrócić bezpośrednio z uzyciem słowa kluczowego `yield` (w jdk12 było to `break`, ale tylko jako preview): 
+```java
+public static void main(String[] args) {
+    System.out.println(switchEvolution("Monday"));
+    System.out.println(switchEvolution("Sunday"));
+}
+
+private static String switchEvolution(String day) {
+    return switch (day) {
+        case "Monday":
+            yield "Weekday";
+        case "Tuesday":
+            yield "Weekday";
+        case "Wednesday":
+            yield "Weekday";
+        case "Thursday":
+            yield "Weekday";
+        case "Friday":
+            yield "Weekday";
+        case "Saturday":
+            yield "Weekend";
+        case "Sunday":
+            yield "Weekend";
+        default:
+            yield "Unknown";
+    };
+}
+```
+Lub od jdk12 z wykorzystaniem operatora strzałki `->`
+```java
+private static String switchEvolution(String day) {
+    return switch (day) {
+        case "Monday" -> "Week day";
+        case "Tuesday" -> "Week day";
+        case "Wednesday" -> "Week day";
+        case "Thursday" -> "Week day";
+        case "Friday" -> "Week day";
+        case "Saturday" -> "Weekend";
+        case "Sunday" -> "Weekend";
+        default -> "Unknown";
+    };
+}
+```
+Od jdk12, można było grupować opcje:
+```java
+    private static String switchEvolution(String day) {
+        return switch (day) {
+            case "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" -> "Week day";
+            case "Saturday", "Sunday" -> "Weekend";
+            default -> "Unknown";
+        };
+    }
+```
+Teraz dopiero zaczyna się ból głowy, bo dokładamy "pattern matching"... (dorzucone w jdk17 jako "preview")
+```java
+public static void main(String[] args) {
+    switchEvolution("Hello from new switch expression and pattern matching");
+    switchEvolution(1000);
+    switchEvolution(new File(""));
+}
+
+private static void switchEvolution(Object object) {
+    switch (object) {
+        case Integer i -> System.out.printf("I am integer: %d \n", i);
+        case Double d -> System.out.printf("I am double: %f \n", d);
+        case String s -> System.out.printf("I am string: %s \n", s);
+        default -> throw new IllegalStateException("Unexpected value: " + object);
+    }
+}
+```
+Skomplikujmy i dorzućmy "null cases" oraz "gaurded patterns":
+```java
+public static void main(String[] args) {
+    switchEvolution("Hello from new switch expression and pattern matching");
+    switchEvolution(1000);
+    //switchEvolution(new File(""));
+    switchEvolution(null);
+    switchEvolution("Hello");
+
+}
+
+private static void switchEvolution(Object object) {
+    switch (object) {
+        case Integer i when i > 10 && i < 2000 -> System.out.printf("I am integer: %d \n", i);
+        case Double d -> System.out.printf("I am double: %f \n", d);
+        case String s when s.length() > 10 -> System.out.printf("I am string: %s \n", s);
+        case null -> System.out.println("I am null :(");
+        default -> throw new IllegalStateException("Unexpected value: " + object);
+    }
+}
+```
+Na początku "łącznikiem" (w jdk17 jako preview) w wyrazeniu `case` na połączenie "pattern matching" oraz "quarded patterns" 
+był `&&` , potem zamieniono na słowo kluczowe `when`. Czy tak się stanie w przypadku `instanceof`? Zobaczymy...
+
 ## recordy
-## dospasowanie wzorca z użyciem `instanceof`
+
+
 ## klasy `sealed`
+
