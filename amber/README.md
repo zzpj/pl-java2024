@@ -1,4 +1,4 @@
-# Projekt Amber - doskonale rozwoju języka
+# Projekt Amber - doskonalenie i rozwój języka
 ![project-amber-timeline.png](img%2Fproject-amber-timeline.png)
 ![java22-arrival.png](img%2Fjava22-arrival.png)
 Żródło: https://openjdk.org/projects/amber/ 
@@ -82,8 +82,56 @@ private static Optional<String> getResult() {
 }
 ```
 
-## switch 
-## bloki tekstowe
+## Uproszczenie skomplikowanego API operacji na plikach
+Wczytywanie i zapisywanie plików (od jdk11):
+```java
+public static void main(String[] args) throws IOException {
+
+    Path path = Files.createTempFile("myfile", ".txt");
+
+    Files.writeString(path, "Some text to be saved");
+
+    String string = Files.readString(path);
+
+    System.out.println(string);
+}
+```
+
+## Nowe metody dla klasy `String` (łancuch znaków)
+```java
+// repeat
+String repeat = "ha".repeat(20);
+
+// strip() vs trim()
+String trimmed = " to be trimmed \t".trim();
+String strip = " to be stripped \t \n".strip();
+String stripLeading = " from leading".stripLeading();
+String stripTrailing = "from tailing  ".stripTrailing();
+
+// isBlank vs isEmpty
+// The isBlank() method, introduced in Java 11, is identical to isEmpty() with the nuance 
+// that it also returns true for Strings that contain only whitespace characters.
+boolean empty = "".isEmpty();
+boolean blank = "".isBlank();
+boolean blank1 = "  ".isBlank();
+boolean blank2 = "\t\n\r\f ".isBlank();
+
+// intent (jdk12)
+String indent15 = "indent\nplease".indent(15);
+
+// lines (jdk11)
+List<String> list = ("ttt \r www \n qwqq \t bbb").lines().toList();
+
+// transform (jdk12)
+List<String> transformed = "Ola\nKasia\nZosia".transform(e -> e.lines().toList());
+
+// splitWithDelimiters (jdk21)
+String[] splitWithDelimiters = "Long::brown::curly::hair".splitWithDelimiters("::", 3);
+```
+## Bloki tekstowe
+
+
+## switch
 ## recordy
 ## dospasowanie wzorca z użyciem `instanceof`
 ## klasy `sealed`
