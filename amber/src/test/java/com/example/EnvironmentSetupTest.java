@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EnvironmentSetupTest {
 
     @Test
-    void shouldRunOnJava21() {
+    void shouldRunOnJava22() {
         int feature = Runtime.version().feature();
-        assertEquals(21, feature);
+        assertEquals(22, feature);
     }
 }

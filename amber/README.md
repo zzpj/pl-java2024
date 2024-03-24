@@ -2,6 +2,8 @@
 ![project-amber-timeline.png](img%2Fproject-amber-timeline.png)
 ![java22-arrival.png](img%2Fjava22-arrival.png)
 Żródło: https://openjdk.org/projects/amber/ 
+Przykłady: https://www.happycoders.eu/java/ ([cheatsheet w pdf](tmp%2Fjava-versions-cheat-sheet-happycoders.eu-v22.0.3.pdf))
+
 
 ## Inferencja typów z użyciem `var` (ang. Local-Variable Type Inference `var`)
 Inferencja typów – mechanizm w językach statycznie typowanych, w którym kompilator określa typ danych na podstawie informacji dostępnych w czasie 
@@ -82,7 +84,7 @@ private static Optional<String> getResult() {
 }
 ```
 
-## Uproszczenie skomplikowanego API operacji na plikach
+## Uproszczenie API do operacji na plikach
 Wczytywanie i zapisywanie plików (od java11):
 ```java
 public static void main(String[] args) throws IOException {
@@ -198,7 +200,7 @@ private static Object getObject() {
 ```
 W powyższym snippecie dzieją się aż 3 rzeczy
 1. testowanie czy `obj` jest typu  `String` lub `Integer`
-2. declarowanie nowych zmiennych `s` lub `i`
+2. deklarowanie nowych zmiennych `s` lub `i`
 3. kastowanie obiektu na typ `String` lub `Integer`
 
 ```java
@@ -218,8 +220,8 @@ private static Object getObject() {
 }
 ```
 
-## Wyrażenie `switch` oraz ewolucja przez kolejne wersje
-Do java7 włącznie tylko liczby całkowite (`int`) mogły być używane:
+## Wyrażenie `switch` oraz ewolucja przez kolejne wydania
+Do java7 włącznie, tylko liczby całkowite (`int`) mogły być używane:
 ```java
 public static void main(String[] args) {
     switchEvolution(5);
@@ -369,7 +371,105 @@ Na początku "łącznikiem" (w java17 jako preview) w wyrazeniu `case` na połą
 był `&&`, potem zamieniono na słowo kluczowe `when`. Czy tak się stanie w przypadku `instanceof`? Zobaczymy...
 
 ## Rekordy
-TODO
+Jako "preview" w java14, standard od jdk16, przed:
+```java
+class Person {
+    private Long id;
+    private String username;
+    private int value;
+    //generate constructor + setters and getters + hashCode, equals and toString methods
+}
+```
+Pośrednie rozwiązanie: `Lombok`
+```java
+@Data
+@AllArgsConstructor
+class Person {
+    private Long id;
+    private String name;
+}
+```
+
+Jednak wprowadzenie rekordów pozwala na stworzenie niemutowalnych obiektów tej "klasy" 
+```java
+public class Sandbox {
+    public static void main(String[] args) {
+        Person person = new Person(1L, "Zbyszko");
+        System.out.println(person);
+        System.out.println(person.hashCode());
+    }
+}
+
+record Person(Long id, String username){}
+```
+Również otrzymujemy dostęp do pól, konstruktor z polami klas, metody `equals`, `hashCode` oraz `toString`, a oprócz 
+tego możemy wprowadzić pole statyczne lub dodatkowe metody:
+
+```java
+record Person(Long id, String username) implements Personable {
+    private static final UUID UUID_IDENTIFIER = UUID.randomUUID();
+
+    public boolean isIdPositiveNumber() {
+        return id > 0;
+    }
+
+    @Override
+    public boolean isHuman() {
+        return true;
+    }
+}
+
+interface Personable{
+    boolean isHuman();
+}
+```
+Rekordy są niejawnie (ang. implicitly) finalne (ang. final), czyli nie możemy z nich dziedziczyć oraz one same nie mogą dziedziczyć z klas. 
+
+Do stworzonego rekordu automatycznie przypisywany jest "kanoniczny konstruktor" (ang. canonical constructor) - tak jak w klasie,
+w której nie ma zadeklarowanego konstruktora, dostajemy "domyślny". Jednak może zostać stworzony kompaktowy (ang. compact cannonical constructor),
+sprawdzający niejawnie przypisane parametry:
+
+```java
+Person {
+    if (id < 0) {
+        throw new IllegalArgumentException(String.format("%d is less than 0", id));
+    }
+}
+```
+
+Możemy też przeciążyć konstruktor i podać np. mniejszą liczbę parametrów, ale zostanie pod tym wywołany 
+konstruktor kanoniczny wraz z tym kompaktowym, bo pola są domyślnie finalne:
+```java
+public static void main(String[] args) {
+    //Person person = new Person(-1L, "Zbyszko");
+    //Person person = new Person(-1L);
+    Person person = new Person(1L);
+    System.out.println(person);
+}
+
+record Person(Long id, String username)  {
+    
+    // custom constructor
+    public Person(Long id) {
+        this(id, null);
+    }
+
+    // compact canonical
+    Person {
+        if (id < 0) {
+            throw new IllegalArgumentException(String.format("%d is less than 0", id));
+        }
+    }
+}
+```
+
+### Rekordy vs Lombok
+- Oba rozwiązania eliminują nadmiarowość kodu (ang. boilerplate code)
+- Rekordy są do małych, niemutowalnych klas
+- Dla klas z duzą ilością pól, Lombok może nam wygenerować wzorzec buildera
+- Lombok nam autogeneruje kod wraz ze wzorcami
+- Klasy z adnotacjami Lomboka są mutowalne
+- Rekordy nie wspierają dziedziczenia 
 
 ## Klasy `sealed`
 TODO
