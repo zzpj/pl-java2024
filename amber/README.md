@@ -1,8 +1,8 @@
 # Projekt Amber - doskonalenie i rozwój języka
 ![project-amber-timeline.png](img%2Fproject-amber-timeline.png)
 ![java22-arrival.png](img%2Fjava22-arrival.png)
-Żródło: https://openjdk.org/projects/amber/ 
-Przykłady: https://www.happycoders.eu/java/ ([cheatsheet w pdf](tmp%2Fjava-versions-cheat-sheet-happycoders.eu-v22.0.3.pdf))
+- Źródło: https://openjdk.org/projects/amber/ 
+- Przykłady: https://www.happycoders.eu/java/ ([cheatsheet w pdf](tmp%2Fjava-versions-cheat-sheet-happycoders.eu-v22.0.3.pdf))
 
 
 ## Inferencja typów z użyciem `var` (ang. Local-Variable Type Inference `var`)

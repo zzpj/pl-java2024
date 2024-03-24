@@ -10,7 +10,7 @@ import java.net.http.HttpResponse;
 public class TodoRepository {
 
     String getTodo() throws URISyntaxException, IOException, InterruptedException {
-        // implement here
+        // TODO: implement here
         // use HttpResponse.BodyHandlers.ofString() handler
         // return response body
 

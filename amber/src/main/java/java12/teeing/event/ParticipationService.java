@@ -52,7 +52,7 @@ class EventParticipation {
 public class ParticipationService {
 
     EventParticipation processEventGuests(List<Guest> guests) {
-        // implement here
+        // TODO: implement here
         // return EventParticipation with sum of all participants and names of participants, who will attend
 
         // TIP

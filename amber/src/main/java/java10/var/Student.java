@@ -16,7 +16,7 @@ public class Student {
         return marks.length;
     }
 
-    // implement here
+    // TODO: implement here
     // rewrite code using var from JDK 10
 
     public Integer getTotalSumOfMarks() {
@@ -29,9 +29,8 @@ public class Student {
 
     public BigDecimal getAverageOfMarks() {
         Integer sum = getTotalSumOfMarks();
-        BigDecimal average = new BigDecimal(sum)
+        return new BigDecimal(sum)
                 .divide(new BigDecimal(marks.length), 3, RoundingMode.UP);
-        return average;
     }
 
     public Integer getMaximumMark() {
