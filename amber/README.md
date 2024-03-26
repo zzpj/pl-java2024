@@ -574,7 +574,7 @@ record Person(Long id, String username) {
 - Klasy z adnotacjami Lomboka są mutowalne
 - Rekordy nie wspierają dziedziczenia
 
-## Klasy `sealed` w kontekście dziedziczenia
+## Klasy `sealed` i dziedziczenie
 - Oznaczając zajęcia jako `final`, zapobiegamy **całkowicie** dziedziczeniu
 - Jednak od java 17, możemy zaimplementować tak zwaną „hierarchię klas zapieczętowanych”:
   - Klasę, której podklasy chcemy ograniczyć, zaznaczamy słowem kluczowym `sealed`.
@@ -613,6 +613,11 @@ class GeometricalOperations {
 2. Zmieniamy przy klasie `Shape` na `sealed` i dodajemy `permits Circle, Triangle`
 3. Oznaczamy klasy `Triangle` i `Cirle` jako `non-sealed` albo `final`
 4. Próbujemy `class GeometricalOperations extends Shape` jednak nie jest na liście dozwolonych klas
+
+```java
+boolean sealed = Shape.class.isSealed();
+Class<?>[] permittedSubclasses = Shape.class.getPermittedSubclasses();
+```
 
 ### Kontekstowe słowa kluczowe (ang. Contextual Keywords)
 
