@@ -4,9 +4,7 @@
 ![java22-arrival.png](img%2Fjava22-arrival.png)
 
 - Źródło: https://openjdk.org/projects/amber/
--
-
-Przykłady: https://www.happycoders.eu/java/ ([cheatsheet w pdf](tmp%2Fjava-versions-cheat-sheet-happycoders.eu-v22.0.3.pdf))
+- Przykłady: https://www.happycoders.eu/java/ ([cheatsheet w pdf](tmp%2Fjava-versions-cheat-sheet-happycoders.eu-v22.0.3.pdf))
 
 ## Inferencja typów z użyciem `var` (ang. Local-Variable Type Inference `var`)
 
@@ -25,19 +23,11 @@ var stream = list.stream();          // infers Stream<String>
 List<String> names = new ArrayList<>();
 // ^ developers complain about degree of boilerplate code
 //var names = new ArrayList<>();
-names.
-
-add("aa");
-names.
-
-add("bb");
-names.
-
-add("cc");
+names.add("aa");
+names.add("bb");
+names.add("cc");
 //names.add(2);
-System.out.
-
-println(names);
+System.out.println(names);
 ```
 
 Ograniczenia:
@@ -55,49 +45,31 @@ Przed java9:
 
 ```java
 List<String> names = new ArrayList<>();
-names.
-
-add("aa");
-names.
-
-add("bb");
-names.
-
-add("cc");
+names.add("aa");
+names.add("bb");
+names.add("cc");
 
 List<String> unmodifiableList = Collections.unmodifiableList(names);
-unmodifiableList.
-
-add("zz");
+unmodifiableList.add("zz");
 ```
 
 Od java9 (przydatne dla kolekcji z małą, niemodyfikowalną liczbą elementów), działa dla `List`, `Set` oraz `Map`:
 
 ```java
 List<String> newUmodificableList = List.of("aa", "bb", "cc");
-newUmodificableList.
-
-add("zz");
+newUmodificableList.add("zz");
 ```
 
 ## Niemutowalne kolekcje zwracane z użyciem `stream()`
 
 ```java
 List<String> names = new ArrayList<>();
-names.
-
-add("aa");
-names.
-
-add("bb");
-names.
-
-add("cc");
+names.add("aa");
+names.add("bb");
+names.add("cc");
 
 List<String> listFromStream = names.stream().collect(Collectors.toUnmodifiableList());
-listFromStream.
-
-add("zzz");
+listFromStream.add("zzz");
 
 //From java16
 List<String> listFromStream_v2 = names.stream().toList();
@@ -355,8 +327,7 @@ private static void switchEvolution(String day) {
 }
 ```
 
-Od java13 mozemy zwrócić bezpośrednio z uzyciem słowa kluczowego `yield` (w java12 było to `break`, ale tylko jako
-preview):
+Od java13 mozemy zwrócić bezpośrednio z uzyciem słowa kluczowego `yield` (w java12 było to `break`, ale tylko jako preview):
 
 ```java
 public static void main(String[] args) {
@@ -458,8 +429,7 @@ private static void switchEvolution(Object object) {
 ```
 
 Na początku "łącznikiem" (w java17 jako preview) w wyrazeniu `case` na połączenie "pattern matching" oraz "quarded
-patterns"
-był `&&`, potem zamieniono na słowo kluczowe `when`. Czy tak się stanie w przypadku `instanceof`? Zobaczymy...
+patterns" był `&&`, potem zamieniono na słowo kluczowe `when`. Czy tak się stanie w przypadku `instanceof`? Zobaczymy...
 
 ## Rekordy
 
