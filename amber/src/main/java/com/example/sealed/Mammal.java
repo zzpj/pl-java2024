@@ -1,4 +1,4 @@
 package com.example.sealed;
 
-public class Mammal {
+public non-sealed class Mammal extends Animal{
 }

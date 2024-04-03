@@ -16,26 +16,24 @@ public class Student {
         return marks.length;
     }
 
-    // TODO: implement here
-    // rewrite code using var from JDK 10
 
     public Integer getTotalSumOfMarks() {
-        Integer sum = 0;
-        for (Integer mark : marks) {
+        var sum = 0;
+        for (var mark : marks) {
             sum += mark;
         }
         return sum;
     }
 
     public BigDecimal getAverageOfMarks() {
-        Integer sum = getTotalSumOfMarks();
+        var sum = getTotalSumOfMarks();
         return new BigDecimal(sum)
                 .divide(new BigDecimal(marks.length), 3, RoundingMode.UP);
     }
 
     public Integer getMaximumMark() {
-        Integer max = Integer.MIN_VALUE;
-        for (Integer mark : marks) {
+        var max = Integer.MIN_VALUE;
+        for (var mark : marks) {
             if (mark > max) {
                 max = mark;
             }
@@ -44,8 +42,8 @@ public class Student {
     }
 
     public Integer getMinimumMark() {
-        Integer min = Integer.MAX_VALUE;
-        for (Integer mark : marks) {
+        var min = Integer.MAX_VALUE;
+        for (var mark : marks) {
             if (mark < min) {
                 min = mark;
             }
@@ -54,9 +52,9 @@ public class Student {
     }
 
     public List<Integer> getDistinctMarks() {
-        List<Integer> distinctMarks = new ArrayList<>();
+        var distinctMarks = new ArrayList<Integer>();
 
-        for (Integer mark : marks) {
+        for (var mark : marks) {
             if (!distinctMarks.contains(mark)) {
                 distinctMarks.add(mark);
             }

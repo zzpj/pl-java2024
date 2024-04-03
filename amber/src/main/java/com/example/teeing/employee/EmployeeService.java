@@ -1,6 +1,7 @@
 package com.example.teeing.employee;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 class Employee {
@@ -18,9 +19,6 @@ class Employee {
 public class EmployeeService {
 
     double getAvgEmployeeSalary(List<Employee> employees) {
-        // TODO: implement here
-        // use List::stream method
-
-        return 0.0;
+        return employees.stream().collect(Collectors.averagingDouble(Employee::getSalary));
     }
 }
