@@ -37,6 +37,7 @@ Grupa 6:
 + Bartłomiej Kałach 242414
 + Piotr Kwiatkowski 242447
 + Jakub Kozielski 242438
++ Marta Glinka 242391
 
 Grupa 7:
 + Aleksander Janicki 242405
