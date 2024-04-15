@@ -342,7 +342,7 @@ public List<Event> getAllFreeEvents(){
     return eventService.getAllFreeEvents();
 }
 ```
-
+Test request'u:
 ```http request
 GET http://localhost:8020/getAllFreeEvents
 ```
@@ -407,7 +407,7 @@ public void addEvent(@Valid @RequestBody Event event) {
 ```
 Domyślne wiadomości w walidatorze: `hibernate-validator-8.0.0.Final.jar!\org\hibernate\validator\ValidationMessages.properties`
 
-### Własny model odpowiedzi błednej:
+#### Własny model odpowiedzi błednej:
 ```java
 @Data
 public class EventErrorResponse {
@@ -458,6 +458,7 @@ public void addEvent(@Valid @RequestBody Event event) {
 ```
 Więcej o walidacji: https://mkyong.com/spring-boot/spring-rest-validation-example/
 
+[Start from here!]
 ## Actuators
 * Teoria: https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
 * Domyślny link: http://localhost:8020/actuator
