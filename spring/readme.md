@@ -41,8 +41,15 @@ Kliknij: **Generate**
 
 ## Pierwszy Kontroler
 ```java
+@SpringBootApplication
+public class EventManagerApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(EventManagerApplication.class, args);
+  }
+}
+
 @RestController
-public class TestController {
+class TestController {
   @GetMapping("/hello")
   public String getServiceName(){
     return "Hello world";
@@ -51,19 +58,22 @@ public class TestController {
 ```
 
 ## Testowanie API:
-
+Użyj wbudowanego klienta w IntelliJ http-request: 
+```http request
+GET http://localhost:8020/hello
+```
 
 ## Bardziej zaawansowany kontroler
 ```java
 @RestController
-public class TestController {
+class TestController {
 
   @Value("${spring.application.name}")
   private String applicationName;
 
   @GetMapping("/hello/{name}")
   public String getServiceName(@PathVariable("name") String name){
-    return "Hello" + name + "\n you are using " + applicationName;
+    return "Hello " + name + "\n you are using " + applicationName;
   }
 }
 ```
@@ -72,10 +82,9 @@ public class TestController {
 Event Model:
 ```java
 @Data
-@Builder(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
+@Builder
 public class Event {
-
   private Long id;
   private String name;
   private String description;
@@ -159,6 +168,26 @@ public class EventController {
   }
 }
 ```
+## Testowanie
+```http request
+GET http://localhost:8020/getAllEvents
+###
+GET http://localhost:8020/getEvent/2
+###
+POST http://localhost:8020/addEvent
+Content-Type: application/json
+
+{
+  "id": 3,
+  "name": "third-event-name",
+  "description": "desc",
+  "entranceFee": 100.0,
+  "startDate": "2024-12-24T20:00:00"
+}
+###
+DELETE http://localhost:8020/delete/2
+```
+
 
 ## Swagger - przejrzysta prezentacja zasobów API
 Dodaj do pom.xml:
@@ -166,7 +195,7 @@ Dodaj do pom.xml:
 <dependency>
   <groupId>org.springdoc</groupId>
   <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-  <version>2.1.0</version>
+  <version>2.5.0</version>
 </dependency>
 ```
 Sprawdź: http://localhost:8020/swagger-ui/index.html
@@ -253,8 +282,7 @@ public class EventService {
   }
 
   public Event updateEvent(Event event) {
-    Event updatedEvent = eventRepository.save(event);
-    return updatedEvent;
+    return eventRepository.save(event);
   }
 
   public void deleteEvent(Long id) {
@@ -263,56 +291,90 @@ public class EventService {
 }
 ```
 
-Controller:
+uzupełnij kontroler o edycję danego Eventu
 ```java
 @RestController
 @Slf4j
 @AllArgsConstructor
 public class EventController {
-
-  private final EventService eventService;
-
-  @GetMapping("/getAllEvents")
-  public List<Event> getAllEvents() {
-    return eventService.getAllEvents();
-  }
-
-  @GetMapping("/getEvent/{id}")
-  public Event getEvent(@PathVariable("id") Long id) {
-    log.info("Id: " + id);
-    return eventService.getEvent(id);
-  }
-
-  @PostMapping("/addEvent")
-  public void addEvent(@RequestBody Event event) {
-    eventService.addEvent(event);
-  }
-
+    // (...) 
   @PutMapping("update/{id}")
   public Event updateEvent(@PathVariable Long id, @RequestBody Event event) {
     return eventService.updateEvent(event);
   }
 
-
-  @DeleteMapping("/delete/{id}")
-  public void removeEvent(@PathVariable("id") Long id) {
-    eventService.deleteEvent(id);
-  }
 }
 ```
+
+```http request
+PUT http://localhost:8020/update/2
+Content-Type: application/json
+
+{
+  "id": 2,
+  "name": "third-event-name",
+  "description": "descxxxx",
+  "entranceFee": 10.0,
+  "startDate": "2024-12-24T20:00:00"
+}
+```
+### Własne zapytanie `@Query`
+```java
+@Repository
+public interface EventRepository extends JpaRepository<Event, Integer> {
+
+    @Query("SELECT e FROM Event e WHERE e.entranceFee = :goodPrice")
+    List<Event> findAllFreeEvents(@Param("goodPrice") Double goodPrice);
+}
+```
+
+Service:
+```java
+public List<Event> getAllFreeEvents() {
+    return eventRepository.findAllFreeEvents(0.0);
+}
+```
+
+Controller:
+```java
+@GetMapping("/getAllFreeEvents")
+public List<Event> getAllFreeEvents(){
+    return eventService.getAllFreeEvents();
+}
+```
+
+```http request
+GET http://localhost:8020/getAllFreeEvents
+```
+
 ### Walidacja danych
 Dodać:
 ```xml
 <dependency>
   <groupId>org.hibernate</groupId>
   <artifactId>hibernate-validator</artifactId>
-  <version>8.0.0.Final</version>
+  <version>8.0.1.Final</version>
 </dependency>
 ```
-Przy okazji naprawia to błąd: `Unable to create a Configuration, because no Jakarta Bean Validation...`
 
-Model:
+uzupełnienie klasy modelowej:
 ```java
+package com.zzpj.EventManager.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @Entity
@@ -345,7 +407,7 @@ public void addEvent(@Valid @RequestBody Event event) {
 ```
 Domyślne wiadomości w walidatorze: `hibernate-validator-8.0.0.Final.jar!\org\hibernate\validator\ValidationMessages.properties`
 
-Model odpowiedzi błędnej:
+### Własny model odpowiedzi błednej:
 ```java
 @Data
 public class EventErrorResponse {
