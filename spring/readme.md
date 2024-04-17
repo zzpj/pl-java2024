@@ -1,6 +1,6 @@
 # Spring 2024 - notatki z zajęć
 ## Prezentacja
-- [Link do prezentacji](http://url-to-be-defined.com)
+- [Link do prezentacji](https://github.com/zzpj/pl-java2024/blob/main/spring/ZZPJ2024-springboot.pdf)
 
 ## Live coding
 Otwórz: https://start.spring.io/
