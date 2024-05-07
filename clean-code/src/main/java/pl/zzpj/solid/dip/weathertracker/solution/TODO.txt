@@ -1,0 +1,4 @@
+Mamy serwis informujący o zmianach pogodowych. Informacje o zmianach wysyłane są na różne urząrzenia: telefony
+lub skrzynki poczty elekronicznej. Oba te urządzenia łączy jedna wspólna cecha jaką jest odbiór wiadomości i jej
+wyświetlenie. Telefon i skrzynka są modułami niskopoziomowymi, natomiast "Tracker" jest modułem wysokopoziomowym,
+który nie powinien zależeć od modułów niskopoziomowych.

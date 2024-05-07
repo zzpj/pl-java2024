@@ -1,0 +1,1 @@
+Reprezentacja modelu ksiązki oraz możliwość jej drukowania (czytania) powinna być odseparowana.

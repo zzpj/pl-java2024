@@ -1,0 +1,5 @@
+Limity prędkości i kary za jej przekroczenie są różne dla każdego z 50 stanów USA.
+Należy dostarczyć łatwo rozszerzalną implementację, w której każdy stan będzie mógł zdefiniować swoje kary.
+Na chwilę obecną załóżmy, że będą to 3 stany USA, które skorzystają z naszego API,
+ale niewykluczone, że w przyszłości inne stany zdecydują się również skorzystać z API.
+Dlatego implementacja powinna być otwarta na rozszerzanie bez potrzeby zmieniania istniejącej już implementacji dla 3 stanów.
