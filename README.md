@@ -23,13 +23,13 @@
  5  | JDK Updates 8-21                            | 27.03.2024 | ZN         |
  6  | LM Studio (AI w Javie)                      | 10.04.2024 | ŁCh        |
  7  | Spring 101                                  | 17.04.2024 | ZN         |
- 8  | Spring 102                                  | 24.04.2024 | TBD        |
+ 8  | Spring 102                                  | 24.04.2024 | AK (MD)    |
  9  | Clean Code + SOLID + Statyczna analiza kodu | 8.05.2024  | ZN + ŁCh   |
  10 | Współbieżność                               | 15.05.2024 | ŁCh        |
  11 | Middle project check                        | 22.05.2024 | ZN+MD+ŁCh  | Zapisy na sloty czasowe są dostępne na platformie WIKAMP                                               
  12 | Microservices Basis                         | 29.05.2024 | ZN         |
  13 | Microservices Advanced                      | 5.06.2024  | ZN         |
- 14 | temat z propozycji                          | 12.06.2024 | .          |
+ 14 | Temat z propozycji                          | 12.06.2024 | .          |
  15 | Final project check                         | 19.06.2024 | ZN+MD+ŁCh  | Zapisy na sloty czasowe są dostępne na platformie WIKAMP                                               
 
 ### Tematy propozycje:
