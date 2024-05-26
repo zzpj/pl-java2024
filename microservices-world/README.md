@@ -1,953 +1,24 @@
 # Microservices
 
-## Live coding scenario I
+## OpenAPI - Server API
 
-### OpenAPI
 * Create small service with use of start.spring.io
-  * Project: Maven 
-  * Language: Java 
-  * Spring Boot: 3.3.0 
-  * Project Metadata Group: com.zzpj
-  * Artifact: TrainTripsManager
-  * Name: TrainTripsManager
-  * Description: Demo project for Spring Boot
-  * Package name: com.zzpj.TrainTripsManager
-  * Packaging: Jar
-  * Java: 21
-  * Dependencies: Web, Actuator, Lombok
+    * Project: Maven
+    * Language: Java
+    * Spring Boot: 3.3.0
+    * Project Metadata Group: com.zzpj
+    * Artifact: TrainTripsManager
+    * Name: TrainTripsManager
+    * Description: Demo project for Spring Boot
+    * Package name: com.zzpj.TrainTripsManager
+    * Packaging: Jar
+    * Java: 21
+    * Dependencies: Web, Actuator, Lombok
 * [OpenAPI ready examples](https://nordicapis.com/3-example-openapi-definitions/)
-* Describe OpenAPI file
-```yaml
-openapi: 3.1.0
-info:
-  title: Train Travel API
-  description: |
-    API for finding and booking train trips across Europe.
+* [OpenAPI file (train-api)]()
 
-    This API was created by [Bump.sh](https://bump.sh/) for the entire OpenAPI
-    community, for educational and demonstrative purposes.
-  version: 1.0.0
-  contact:
-    name: Train Support
-    url: https://example.com/support
-    email: support@example.com
-  license:
-    name: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
-    identifier: CC-BY-NC-SA-4.0
-
-servers:
-  - url: https://api.example.com
-    description: Production
-
-tags:
-  - name: Stations
-    description: |
-      Find and filter train stations across Europe, including their location
-      and local timezone.
-  - name: Trips
-    description: |
-      Timetables and routes for train trips between stations, including pricing
-      and availability.
-  - name: Bookings
-    description: |
-      Create and manage bookings for train trips, including passenger details
-      and optional extras.
-  - name: Payments
-    description: |
-      Pay for bookings using a card or bank account, and view payment
-      status and history.
-
-      > warn
-      > Bookings usually expire within 1 hour so you'll need to make your payment
-      > before the expiry date 
-
-paths:
-  /stations:
-    get:
-      summary: Get a list of train stations
-      description: Returns a list of all train stations in the system.
-      operationId: get-stations
-      tags:
-        - Stations
-      responses:
-        '200':
-          description: A list of train stations
-          headers:
-            RateLimit:
-              $ref: '#/components/headers/RateLimit'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Station'
-              example:
-                data:
-                  - id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                    name: Berlin Hauptbahnhof
-                    address: Invalidenstraße 10557 Berlin, Germany
-                    country_code: DE
-                    timezone: Europe/Berlin
-                  - id: b2e783e1-c824-4d63-b37a-d8d698862f1d
-                    name: Paris Gare du Nord
-                    address: 18 Rue de Dunkerque 75010 Paris, France
-                    country_code: FR
-                    timezone: Europe/Paris
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  /trips:
-    get:
-      summary: Get available train trips
-      description: Returns a list of available train trips between the specified origin and destination stations on the given date, and allows for filtering by bicycle and dog allowances.
-      operationId: get-trips
-      tags:
-        - Trips
-      parameters:
-        - name: origin
-          in: query
-          description: The ID of the origin station
-          required: true
-          schema:
-            type: string
-            format: uuid
-          example: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-        - name: destination
-          in: query
-          description: The ID of the destination station
-          required: true
-          schema:
-            type: string
-            format: uuid
-          example: b2e783e1-c824-4d63-b37a-d8d698862f1d
-        - name: date
-          in: query
-          description: The date and time of the trip in ISO 8601 format in origin station's timezone.
-          required: true
-          schema:
-            type: string
-            format: date-time
-          example: '2024-02-01T09:00:00Z'
-        - name: bicycles
-          in: query
-          description: Only return trips where bicycles are known to be allowed
-          required: false
-          schema:
-            type: boolean
-            default: false
-        - name: dogs
-          in: query
-          description: Only return trips where dogs are known to be allowed
-          required: false
-          schema:
-            type: boolean
-            default: false
-      responses:
-        '200':
-          description: A list of available train trips
-          headers:
-            RateLimit:
-              $ref: '#/components/headers/RateLimit'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Trip'
-              example:
-                data:
-                  - id: ea399ba1-6d95-433f-92d1-83f67b775594
-                    origin: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                    destination: b2e783e1-c824-4d63-b37a-d8d698862f1d
-                    departure_time: '2024-02-01T10:00:00Z'
-                    arrival_time: '2024-02-01T16:00:00Z'
-                    price: 50
-                    operator: Deutsche Bahn
-                    bicycles_allowed: true
-                    dogs_allowed: true
-                  - id: 4d67459c-af07-40bb-bb12-178dbb88e09f
-                    origin: b2e783e1-c824-4d63-b37a-d8d698862f1d
-                    destination: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                    departure_time: '2024-02-01T12:00:00Z'
-                    arrival_time: '2024-02-01T18:00:00Z'
-                    price: 50
-                    operator: SNCF
-                    bicycles_allowed: true
-                    dogs_allowed: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  /bookings:
-    get:
-      operationId: get-bookings
-      summary: List existing bookings
-      description: Returns a list of all trip bookings by the authenticated user.
-      tags:
-        - Bookings
-      responses:
-        '200':
-          description: A list of bookings
-          headers:
-            RateLimit:
-              $ref: '#/components/headers/RateLimit'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Booking'
-              example:
-                data:
-                  - id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                    trip_id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                    passenger_name: John Doe
-                    has_bicycle: true
-                    has_dog: true
-                  - id: b2e783e1-c824-4d63-b37a-d8d698862f1d
-                    trip_id: b2e783e1-c824-4d63-b37a-d8d698862f1d
-                    passenger_name: Jane Smith
-                    has_bicycle: false
-                    has_dog: false
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-    post:
-      operationId: create-booking
-      summary: Create a booking
-      description: A booking is a temporary hold on a trip. It is not confirmed until the payment is processed.
-      tags:
-        - Bookings
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Booking'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Booking'
-      responses:
-        '201':
-          description: Booking successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Booking'
-              example:
-                id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                trip_id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                passenger_name: John Doe
-                has_bicycle: true
-                has_dog: true
-                links:
-                  self: https://api.example.com/bookings/efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /bookings/{bookingId}:
-    parameters:
-      - name: bookingId
-        in: path
-        required: true
-        description: The ID of the booking to retrieve.
-        schema:
-          type: string
-          format: uuid
-        example: 1725ff48-ab45-4bb5-9d02-88745177dedb
-    get:
-      summary: Get a booking
-      description: Returns the details of a specific booking.
-      operationId: get-booking
-      tags:
-        - Bookings
-      responses:
-        '200':
-          description: The booking details
-          headers:
-            RateLimit:
-              $ref: '#/components/headers/RateLimit'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Booking'
-              example:
-                id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                trip_id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-                passenger_name: John Doe
-                has_bicycle: true
-                has_dog: true
-                links:
-                  self: https://api.example.com/bookings/1725ff48-ab45-4bb5-9d02-88745177dedb
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-    delete:
-      summary: Delete a booking
-      description: Deletes a booking, cancelling the hold on the trip.
-      operationId: delete-booking
-      tags:
-        - Bookings
-      responses:
-        '204':
-          description: Booking deleted
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /bookings/{bookingId}/payment:
-    parameters:
-      - name: bookingId
-        in: path
-        required: true
-        description: The ID of the booking to pay for.
-        schema:
-          type: string
-          format: uuid
-        example: 1725ff48-ab45-4bb5-9d02-88745177dedb
-    post:
-      summary: Pay for a Booking
-      description: A payment is an attempt to pay for the booking, which will confirm the booking for the user and enable them to get their tickets.
-      operationId: create-booking-payment
-      tags:
-        - Payments
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookingPayment'
-            examples:
-              Card:
-                summary: Card Payment
-                value:
-                  amount: 49.99
-                  currency: gbp
-                  source:
-                    object: card
-                    name: J. Doe
-                    number: '4242424242424242'
-                    cvc: 123
-                    exp_month: 12
-                    exp_year: 2025
-                    address_line1: 123 Fake Street
-                    address_line2: 4th Floor
-                    address_city: London
-                    address_country: gb
-                    address_post_code: N12 9XX
-              Bank:
-                summary: Bank Account Payment
-                value:
-                  amount: 100.5
-                  currency: gbp
-                  source:
-                    object: bank_account
-                    name: J. Doe
-                    number: '00012345'
-                    sort_code: '000123'
-                    account_type: individual
-                    bank_name: Starling Bank
-                    country: gb
-      responses:
-        '200':
-          description: Payment successful
-          headers:
-            RateLimit:
-              $ref: '#/components/headers/RateLimit'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BookingPayment'
-              examples:
-                Card:
-                  summary: Card Payment
-                  value:
-                    id: 2e3b4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a
-                    amount: 49.99
-                    currency: gbp
-                    source:
-                      object: card
-                      name: J. Doe
-                      number: '************4242'
-                      cvc: 123
-                      exp_month: 12
-                      exp_year: 2025
-                      address_country: gb
-                      address_post_code: N12 9XX
-                    status: succeeded
-                    links:
-                      booking: https://api.example.com/bookings/1725ff48-ab45-4bb5-9d02-88745177dedb/payment
-                Bank:
-                  summary: Bank Account Payment
-                  value:
-                    id: 2e3b4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a
-                    amount: 100.5
-                    currency: gbp
-                    source:
-                      object: bank_account
-                      name: J. Doe
-                      account_type: individual
-                      number: '*********2345'
-                      sort_code: '000123'
-                      bank_name: Starling Bank
-                      country: gb
-                    status: succeeded
-                    links:
-                      booking: https://api.example.com/bookings/1725ff48-ab45-4bb5-9d02-88745177dedb
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-webhooks:
-  newBooking:
-    post:
-      operationId: new-booking
-      summary: New Booking
-      description: |
-        Subscribe to new bookings being created, to update integrations for your users.  Related data is available via the links provided in the request.
-      tags:
-        - Bookings
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Booking'
-            example:
-              id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-              trip_id: efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-              passenger_name: John Doe
-              has_bicycle: true
-              has_dog: true
-              links:
-                self: https://api.example.com/bookings/1725ff48-ab45-4bb5-9d02-88745177dedb
-      responses:
-        '200':
-          description: Return a 200 status to indicate that the data was received successfully.
-
-components:
-  schemas:
-    Station:
-      type: object
-      xml:
-        name: station
-      required:
-        - id
-        - name
-        - address
-        - country_code
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique identifier for the station.
-          examples:
-            - efdbb9d1-02c2-4bc3-afb7-6788d8782b1e
-            - b2e783e1-c824-4d63-b37a-d8d698862f1d
-        name:
-          type: string
-          description: The name of the station
-          examples:
-            - Berlin Hauptbahnhof
-            - Paris Gare du Nord
-        address:
-          type: string
-          description: The address of the station.
-          examples:
-            - Invalidenstraße 10557 Berlin, Germany
-            - 18 Rue de Dunkerque 75010 Paris, France
-        country_code:
-          type: string
-          description: The country code of the station.
-          format: iso-country-code
-          examples:
-            - DE
-            - FR
-        timezone:
-          type: string
-          description: The timezone of the station in the [IANA Time Zone Database format](https://www.iana.org/time-zones).
-          examples:
-            - Europe/Berlin
-            - Europe/Paris
-    Problem:
-      xml:
-        name: problem
-        namespace: urn:ietf:rfc:7807
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type
-          example: https://example.com/probs/out-of-credit
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type
-          example: You do not have enough credit.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem
-          example: Your current balance is 30, but that costs 50.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem
-          example: /account/12345/msgs/abc
-        status:
-          type: integer
-          description: The HTTP status code
-          example: 400
-    Trip:
-      type: object
-      xml:
-        name: trip
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique identifier for the trip
-          examples:
-            - 4f4e4e1-c824-4d63-b37a-d8d698862f1d
-        origin:
-          type: string
-          description: The starting station of the trip
-          examples:
-            - Berlin Hauptbahnhof
-            - Paris Gare du Nord
-        destination:
-          type: string
-          description: The destination station of the trip
-          examples:
-            - Paris Gare du Nord
-            - Berlin Hauptbahnhof
-        departure_time:
-          type: string
-          format: date-time
-          description: The date and time when the trip departs
-          examples:
-            - '2024-02-01T10:00:00Z'
-        arrival_time:
-          type: string
-          format: date-time
-          description: The date and time when the trip arrives
-          examples:
-            - '2024-02-01T16:00:00Z'
-        operator:
-          type: string
-          description: The name of the operator of the trip
-          examples:
-            - Deutsche Bahn
-            - SNCF
-        price:
-          type: number
-          description: The cost of the trip
-          examples:
-            - 50
-        bicycles_allowed:
-          type: boolean
-          description: Indicates whether bicycles are allowed on the trip
-        dogs_allowed:
-          type: boolean
-          description: Indicates whether dogs are allowed on the trip
-    Booking:
-      type: object
-      xml:
-        name: booking
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique identifier for the booking
-          readOnly: true
-          examples:
-            - 3f3e3e1-c824-4d63-b37a-d8d698862f1d
-        trip_id:
-          type: string
-          format: uuid
-          description: Identifier of the booked trip
-          examples:
-            - 4f4e4e1-c824-4d63-b37a-d8d698862f1d
-        passenger_name:
-          type: string
-          description: Name of the passenger
-          examples:
-            - John Doe
-        has_bicycle:
-          type: boolean
-          description: Indicates whether the passenger has a bicycle.
-        has_dog:
-          type: boolean
-          description: Indicates whether the passenger has a dog.
-    BookingPayment:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the payment. This will be a unique identifier for the payment, and is used to reference the payment in other objects.
-          type: string
-          format: uuid
-          readOnly: true
-        amount:
-          description: Amount intended to be collected by this payment. A positive decimal figure describing the amount to be collected.
-          type: number
-          exclusiveMinimum: 0
-          examples:
-            - 49.99
-        currency:
-          description: Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase.
-          type: string
-          enum:
-            - bam
-            - bgn
-            - chf
-            - eur
-            - gbp
-            - nok
-            - sek
-            - try
-        source:
-          unevaluatedProperties: false
-          description: The payment source to take the payment from. This can be a card or a bank account. Some of these properties will be hidden on read to protect PII leaking.
-          anyOf:
-            - title: Card
-              description: A card (debit or credit) to take payment from.
-              properties:
-                object:
-                  type: string
-                  const: card
-                name:
-                  type: string
-                  description: Cardholder's full name as it appears on the card.
-                  examples:
-                    - Francis Bourgeois
-                number:
-                  type: string
-                  description: The card number, as a string without any separators. On read all but the last four digits will be masked for security.
-                  examples:
-                    - '4242424242424242'
-                cvc:
-                  type: integer
-                  description: Card security code, 3 or 4 digits usually found on the back of the card.
-                  minLength: 3
-                  maxLength: 4
-                  writeOnly: true
-
-                  example: 123
-                exp_month:
-                  type: integer
-                  format: int64
-                  description: Two-digit number representing the card's expiration month.
-                  examples:
-                    - 12
-                exp_year:
-                  type: integer
-                  format: int64
-                  description: Four-digit number representing the card's expiration year.
-                  examples:
-                    - 2025
-                address_line1:
-                  type: string
-                  writeOnly: true
-                address_line2:
-                  type: string
-                  writeOnly: true
-                address_city:
-                  type: string
-                address_country:
-                  type: string
-                address_post_code:
-                  type: string
-              required:
-                - name
-                - number
-                - cvc
-                - exp_month
-                - exp_year
-                - address_country
-            - title: Bank Account
-              description: A bank account to take payment from. Must be able to make payments in the currency specified in the payment.
-              type: object
-              properties:
-                object:
-                  const: bank_account
-                  type: string
-                name:
-                  type: string
-                number:
-                  type: string
-                  description: The account number for the bank account, in string form. Must be a current account.
-                sort_code:
-                  type: string
-                  description: The sort code for the bank account, in string form. Must be a six-digit number.
-                account_type:
-                  enum:
-                    - individual
-                    - company
-                  type: string
-                  description: The type of entity that holds the account. This can be either `individual` or `company`.
-                bank_name:
-                  type: string
-                  description: The name of the bank associated with the routing number.
-                  examples:
-                    - Starling Bank
-                country:
-                  type: string
-                  description: Two-letter country code (ISO 3166-1 alpha-2).
-              required:
-                - name
-                - number
-                - account_type
-                - bank_name
-                - country
-        status:
-          description: The status of the payment, one of `pending`, `succeeded`, or `failed`.
-          type: string
-          enum:
-            - pending
-            - succeeded
-            - failed
-          readOnly: true
-  headers:
-    RateLimit:
-      description: |
-        The RateLimit header communicates quota policies. It contains a `limit` to
-        convey the expiring limit, `remaining` to convey the remaining quota units,
-        and `reset` to convey the time window reset time.
-      schema:
-        type: string
-        examples:
-          - limit=10, remaining=0, reset=10
-
-    Retry-After:
-      description: |
-        The Retry-After header indicates how long the user agent should wait before making a follow-up request. 
-        The value is in seconds and can be an integer or a date in the future. 
-        If the value is an integer, it indicates the number of seconds to wait. 
-        If the value is a date, it indicates the time at which the user agent should make a follow-up request.
-      schema:
-        type: string
-      examples:
-        integer:
-          value: '120'
-          summary: Retry after 120 seconds
-        date:
-          value: 'Fri, 31 Dec 2021 23:59:59 GMT'
-          summary: Retry after the specified date
-
-  responses:
-    BadRequest:
-      description: Bad Request
-      headers:
-        RateLimit:
-          $ref: '#/components/headers/RateLimit'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/bad-request
-            title: Bad Request
-            status: 400
-            detail: The request is invalid or missing required parameters.
-        application/problem+xml:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/bad-request
-            title: Bad Request
-            status: 400
-            detail: The request is invalid or missing required parameters.
-
-    Conflict:
-      description: Conflict
-      headers:
-        RateLimit:
-          $ref: '#/components/headers/RateLimit'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/conflict
-            title: Conflict
-            status: 409
-            detail: There is a conflict with an existing resource.
-        application/problem+xml:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/conflict
-            title: Conflict
-            status: 409
-            detail: There is a conflict with an existing resource.
-
-    Forbidden:
-      description: Forbidden
-      headers:
-        RateLimit:
-          $ref: '#/components/headers/RateLimit'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/forbidden
-            title: Forbidden
-            status: 403
-            detail: Access is forbidden with the provided credentials.
-        application/problem+xml:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/forbidden
-            title: Forbidden
-            status: 403
-            detail: Access is forbidden with the provided credentials.
-
-    InternalServerError:
-      description: Internal Server Error
-      headers:
-        RateLimit:
-          $ref: '#/components/headers/RateLimit'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/internal-server-error
-            title: Internal Server Error
-            status: 500
-            detail: An unexpected error occurred.
-        application/problem+xml:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/internal-server-error
-            title: Internal Server Error
-            status: 500
-            detail: An unexpected error occurred.
-
-    NotFound:
-      description: Not Found
-      headers:
-        RateLimit:
-          $ref: '#/components/headers/RateLimit'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/not-found
-            title: Not Found
-            status: 404
-            detail: The requested resource was not found.
-        application/problem+xml:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/not-found
-            title: Not Found
-            status: 404
-            detail: The requested resource was not found.
-
-    TooManyRequests:
-      description: Too Many Requests
-      headers:
-        RateLimit:
-          $ref: '#/components/headers/RateLimit'
-        Retry-After:
-          $ref: '#/components/headers/Retry-After'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: You have exceeded the rate limit.
-        application/problem+xml:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: You have exceeded the rate limit.
-
-    Unauthorized:
-      description: Unauthorized
-      headers:
-        RateLimit:
-          $ref: '#/components/headers/RateLimit'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/unauthorized
-            title: Unauthorized
-            status: 401
-            detail: You do not have the necessary permissions.
-        application/problem+xml:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            type: https://example.com/errors/unauthorized
-            title: Unauthorized
-            status: 401
-            detail: You do not have the necessary permissions.
-```
 * Dependencies-config:
-  * dependencies:
+    * dependencies:
   ```xml
     <dependency>
         <groupId>org.openapitools</groupId>
@@ -961,7 +32,7 @@ components:
         <version>2.5.0</version>
     </dependency>
   ```
-  * plugin:
+    * plugin:
   ```xml
     <plugin>
         <groupId>org.openapitools</groupId>
@@ -990,19 +61,291 @@ components:
   ```
 * run `mvn clean install`
 * implement generated api
-  ```java
-  //TODO
-  ```
-* run app
 
+```java
 
-## Read & watch
+@RestController
+@RequiredArgsConstructor
+class StationController implements StationsApi {
+
+    private final StationService stationService;
+
+    @Override
+    public ResponseEntity<List<Station>> getStations() {
+        return ResponseEntity.ok(stationService.getStations());
+    }
+}
+```
+
+```java
+
+@Service
+class StationService {
+    public List<Station> getStations() {
+        Station plStation = new Station().id(UUIDConstant.LODZ_STATION).name("Łódź Fabryczna").countryCode("PL").timezone("Europe/Warsaw");
+        Station deStation = new Station().id(UUIDConstant.BERLIN_STATION).name("Berlin Hauptbahnhof").countryCode("DE").timezone("Europe/Berlin");
+        Station frStation = new Station().id(UUIDConstant.PARIS_STATION).name("Paris Gare du Nord").countryCode("FR").timezone("Europe/Paris");
+        Station itStation = new Station().id(UUIDConstant.ROME_STATION).name("Roma Termini").countryCode("IT").timezone("Europe/Rome");
+        return List.of(plStation, deStation, frStation, itStation);
+    }
+}
+
+@UtilityClass
+class UUIDConstant {
+    public static final UUID LODZ_STATION = UUID.fromString("b2cc2fe2-be4b-4733-9e21-9419711d0e04");
+    public static final UUID PARIS_STATION = UUID.fromString("083d3f87-a738-4567-9472-2cf0c325c115");
+    public static final UUID BERLIN_STATION = UUID.fromString("23c20c5f-d257-46f6-ace3-9074dad470a2");
+    public static final UUID ROME_STATION = UUID.fromString("139d47ee-4724-4028-b261-e003fe5fcc40");
+    public static final UUID BOOKING_UUID = UUID.fromString("29e1ca47-7989-4e4c-8c93-525e8f68ae71");
+    public static final UUID TRIP_LODZ_BERLIN_UUID = UUID.fromString("ec60282f-24b7-4b60-b209-78c57f475112");
+    public static final UUID TRIP_BERLIN_PARIS_UUID = UUID.fromString("5fddbeae-f1ba-497d-927c-49c9b9e6abd0");
+    public static final UUID TRIP_PARIS_ROME_UUID = UUID.fromString("23f2c16b-8e35-4960-b8f4-bc18e80fe943");
+    public static final UUID TRIP_ROME_LODZ_UUID = UUID.fromString("1231765e-360a-4eff-96e6-bfba39606c34");
+}
+```
+
+```java
+
+@RestController
+@RequiredArgsConstructor
+class Trips implements TripsApi {
+
+    private final TripService tripService;
+
+    @Override
+    public ResponseEntity<List<Trip>> getTrips(UUID origin, UUID destination, OffsetDateTime date, Boolean bicycles, Boolean dogs) {
+        return ResponseEntity.ok(tripService.getTrips(origin, destination, date, bicycles, dogs));
+    }
+}
+
+@Service
+class TripService {
+    public List<Trip> getTrips(UUID origin, UUID destination, OffsetDateTime date, Boolean bicycles, Boolean dogs) {
+        List<Trip> trips = List.of(
+                new Trip().id(UUIDConstant.TRIP_LODZ_BERLIN_UUID)
+                        .arrivalTime(OffsetDateTime.now())
+                        .departureTime(OffsetDateTime.now())
+                        .price(BigDecimal.valueOf(30))
+                        .bicyclesAllowed(true)
+                        .dogsAllowed(true)
+                        .operator("PKP")
+                        .origin(UUIDConstant.LODZ_STATION.toString())
+                        .destination(UUIDConstant.BOOKING_UUID.toString()),
+                new Trip().id(UUIDConstant.TRIP_BERLIN_PARIS_UUID)
+                        .arrivalTime(OffsetDateTime.now())
+                        .departureTime(OffsetDateTime.now())
+                        .price(BigDecimal.valueOf(60))
+                        .bicyclesAllowed(true)
+                        .dogsAllowed(false)
+                        .operator("DB")
+                        .origin(UUIDConstant.BERLIN_STATION.toString())
+                        .destination(UUIDConstant.PARIS_STATION.toString()),
+                new Trip().id(UUIDConstant.TRIP_PARIS_ROME_UUID)
+                        .arrivalTime(OffsetDateTime.now())
+                        .departureTime(OffsetDateTime.now())
+                        .price(BigDecimal.valueOf(90))
+                        .bicyclesAllowed(false)
+                        .dogsAllowed(false)
+                        .operator("SCNF")
+                        .origin(UUIDConstant.PARIS_STATION.toString())
+                        .destination(UUIDConstant.ROME_STATION.toString())
+        );
+        return trips.stream()
+                .filter(e -> origin.toString().equals(e.getOrigin()) && destination.toString().equals(e.getDestination()))
+                .filter(e -> Objects.nonNull(date) && (date.equals(e.getArrivalTime()) || date.equals(e.getDepartureTime())))
+                .filter(e -> bicycles == e.getBicyclesAllowed())
+                .filter(e -> dogs == e.getDogsAllowed())
+                .toList();
+    }
+}
+```
+
+```java
+
+@RestController
+@RequiredArgsConstructor
+class BookingController implements BookingsApi {
+
+    private final BookingService bookingService;
+
+    @Override
+    public ResponseEntity<Booking> createBooking(Booking booking) {
+        bookingService.createBooking(booking);
+        return ResponseEntity.ok(booking);
+    }
+
+    @Override
+    public ResponseEntity<BookingPayment> createBookingPayment(UUID bookingId, BookingPayment bookingPayment) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteBooking(UUID bookingId) {
+        bookingService.deleteBooking(bookingId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Booking> getBooking(UUID bookingId) {
+        return ResponseEntity.ok(bookingService.getBooking(bookingId));
+    }
+
+    @Override
+    public ResponseEntity<List<Booking>> getBookings() {
+        return ResponseEntity.ok(bookingService.getBookings());
+    }
+
+}
+
+@RestController
+class BookingService {
+
+    private List<Booking> bookings;
+
+    public BookingService() {
+        bookings = new ArrayList<>();
+        bookings.add(new Booking()
+                .id(UUIDConstant.BOOKING_UUID)
+                .hasBicycle(true)
+                .hasDog(true)
+                .passengerName("Franek")
+                .tripId(UUIDConstant.TRIP_ROME_LODZ_UUID)
+        );
+    }
+
+    public void createBooking(Booking booking) {
+        booking.setId(UUID.randomUUID());
+        bookings.add(booking);
+    }
+
+    public Booking getBooking(UUID bookingId) {
+        for (Booking booking : bookings) {
+            if (booking.getId().equals(bookingId)) {
+                return booking;
+            }
+        }
+        return null;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
+    }
+
+    public void deleteBooking(UUID bookingId) {
+        bookings.remove(getBooking(bookingId));
+    }
+}
+```
+
+* run app (set `server.port=8020` in _application.properties_)
+* Reminder: generated code is not commited to repo
+
+## OpenAPI - Consumer API
+
+* Create second service with use of start.spring.io
+    * Project: Maven
+    * Language: Java
+    * Spring Boot: 3.3.0
+    * Project Metadata Group: com.zzpj
+    * Artifact: TrainTripsOrganizerService
+    * Name: TrainTripsOrganizerService
+    * Description: Demo project for Spring Boot
+    * Package name: com.zzpj.TrainTripsOrganizerService
+    * Packaging: Jar
+    * Java: 21
+    * Dependencies: Web, Actuator, Lombok
+* complete `pom.xml` with openAPI dependencies:
+
+```xml
+
+<dependency>
+    <groupId>org.openapitools</groupId>
+    <artifactId>jackson-databind-nullable</artifactId>
+    <version>0.2.6</version>
+</dependency>
+
+<dependency>
+<groupId>org.springdoc</groupId>
+<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+<version>2.5.0</version>
+</dependency>
+```
+
+```xml
+
+<plugin>
+    <groupId>org.openapitools</groupId>
+    <artifactId>openapi-generator-maven-plugin</artifactId>
+    <version>7.6.0</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+            <configuration>
+                <inputSpec>${project.basedir}/api/train-api.yml</inputSpec>
+                <generatorName>java</generatorName>
+                <apiPackage>com.zzpj.openapi.api</apiPackage>
+                <modelPackage>com.zzpj.openapi.model</modelPackage>
+                <generateApiTests>false</generateApiTests>
+                <generateModelTests>false</generateModelTests>
+                <configOptions>
+                    <useJakartaEe>true</useJakartaEe>
+                    <library>resttemplate</library>
+                </configOptions>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+* complete `train-api.yml` with server URL
+
+```yaml
+servers:
+  - url: https://api.example.com
+    description: Production
+  - url: http://localhost:8020/
+    description: local dev instance
+```
+
+* remove spring test units if needed
+* complete code
+
+```java
+
+@SpringBootApplication
+public class TrainTripsOrganizerServiceApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(TrainTripsOrganizerServiceApplication.class, args);
+    }
+
+    @Bean
+    public StationsApi stationsApi() {
+        return new StationsApi();
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner(StationsApi stationsApi) {
+        return args -> {
+            stationsApi.getStations().forEach(System.out::println);
+        };
+    }
+}
+```
+
+* run and test
+
+## Read & watch about microservices (theoretical part)
 
 ### How to start
+
 * [https://microservices.io/](https://microservices.io/)
 * [12factor.net](https://12factor.net/)
 
 ### Online courses
+
 * https://app.pluralsight.com/library/courses/getting-started-microservices
 * https://app.pluralsight.com/library/courses/microservices-fundamentals
 * https://app.pluralsight.com/library/courses/building-reactive-microservices (Java demo app)
@@ -1011,8 +354,78 @@ components:
 * https://app.pluralsight.com/library/courses/java-microservices-spring-cloud-coordinating-services
 
 ### Youtube
+
 * https://youtu.be/P4iomsHmOW0
 * https://youtu.be/GBTdnfD6s5Q
 
 ### Spring Cloud documentation
+
 * https://spring.io/projects/spring-cloud
+
+## Eureka Server
+
+* Create second service with use of start.spring.io
+    * Project: Maven
+    * Language: Java
+    * Spring Boot: 3.3.0
+    * Project Metadata Group: com.zzpj
+    * Artifact: TrainTripsEcoSystem
+    * Name: TrainTripsEcoSystem
+    * Description: Demo project for Spring Boot
+    * Package name: com.zzpj.TrainTripsEcoSystem
+    * Packaging: Jar
+    * Java: 21
+    * Dependencies: Web, Eureka Server
+* Open main class with `@SpringBootApplication` annotation
+* Use Spring Cloud’s `@EnableEurekaServer` to stand up a registry with which other applications can communicate. This is
+  a regular Spring Boot application with one annotation added to enable the service registry.
+* By default, the registry also tries to register itself, so you need to disable that behavior as well
+  in  `application.properties` file.
+   ```properties
+   eureka.client.register-with-eureka=false
+   eureka.client.fetch-registry=false
+   ```
+* Select the port which will be used by Eureka Server
+   ```properties
+   server.port=8761
+   ```
+* Enter URL: `http://localhost:8761/`
+
+### Register both, newly created services
+* Complete `pom.xml`:
+  ```xml
+  <spring-cloud.version>2023.0.1</spring-cloud.version>
+  ```
+  ```xml
+  <dependency>
+     <groupId>org.springframework.cloud</groupId>
+     <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+  </dependency>
+  ```
+  ```xml
+  <dependencyManagement>
+     <dependencies>
+         <dependency>
+             <groupId>org.springframework.cloud</groupId>
+             <artifactId>spring-cloud-dependencies</artifactId>
+             <version>${spring-cloud.version}</version>
+             <type>pom</type>
+             <scope>import</scope>
+         </dependency>
+     </dependencies>
+  </dependencyManagement>
+  ```
+* Add annotation `@EnableDiscoveryClient` to main class
+* Add some properties into `application.properties`
+   ```properties
+   eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+   eureka.client.fetch-registry=true
+   eureka.client.register-with-eureka=true
+   ```
+* Run all services and determine if service has been registered in Eureka Discovery Server, either by entering `http://localhost:8761/` or using logs.
+
+## Load balancer
+
+## Config Server
+
+## Keycloak as Authorization Server 
