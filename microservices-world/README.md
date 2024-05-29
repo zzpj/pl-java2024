@@ -533,33 +533,36 @@ public class TrainTripsOrganizerServiceApplication {
     ```
 1. Run mvn:  `mvn clean install`
 1. Modify `CommandLineRunner` bean:
+
   ```java
-  @Bean
-  @LoadBalanced
-  public CommandLineRunner commandLineRunner(StationsApi stationsApi) {
-      return args -> {
-          System.out.println(stationsApi.getApiClient().getBasePath());
-          stationsApi.getStations().forEach(System.out::println);
-      };
-  }    
+
+@Bean
+@LoadBalanced
+public CommandLineRunner commandLineRunner(StationsApi stationsApi) {
+    return args -> {
+        System.out.println(stationsApi.getApiClient().getBasePath());
+        stationsApi.getStations().forEach(System.out::println);
+    };
+}    
   ```
+
 1. Rerun for OpenAPI
 
 ## Config Server
 
 1. Open [Spring Initializr website](https://start.spring.io/)
 1. Complete Metadata section: set Artifact name as `TrainTripsConfigServer`
-  * Project: Maven
-  * Language: Java
-  * Spring Boot: 3.3.0
-  * Project Metadata Group: com.zzpj
-  * Artifact: TrainTripsConfigServer
-  * Name: TrainTripsConfigServer
-  * Description: Demo project for Spring Boot
-  * Package name: com.zzpj.TrainTripsConfigServer
-  * Packaging: Jar
-  * Java: 21
-  * Dependencies: Spring Web, Eureka Discovery Client, Config Server
+    * Project: Maven
+    * Language: Java
+    * Spring Boot: 3.3.0
+    * Project Metadata Group: com.zzpj
+    * Artifact: TrainTripsConfigServer
+    * Name: TrainTripsConfigServer
+    * Description: Demo project for Spring Boot
+    * Package name: com.zzpj.TrainTripsConfigServer
+    * Packaging: Jar
+    * Java: 21
+    * Dependencies: Spring Web, Eureka Discovery Client, Config Server
 1. Click Generate button, download and unzip package
 1. Copy unzipped `TrainTripsConfigServer` folder into your project folder
 1. Add following annotations: `@EnableDiscoveryClient` & `@EnableConfigServer` into main class
@@ -611,5 +614,4 @@ public class TrainTripsOrganizerServiceApplication {
    /{label}/{application}-{profile}.properties
    ```
 
-
-//## Keycloak as Authorization Server 
+## Keycloak as authorization server (5.06)
