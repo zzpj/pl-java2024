@@ -533,19 +533,16 @@ public class TrainTripsOrganizerServiceApplication {
     ```
 1. Run mvn:  `mvn clean install`
 1. Modify `CommandLineRunner` bean:
-
-  ```java
-
-@Bean
-@LoadBalanced
-public CommandLineRunner commandLineRunner(StationsApi stationsApi) {
-    return args -> {
-        System.out.println(stationsApi.getApiClient().getBasePath());
-        stationsApi.getStations().forEach(System.out::println);
-    };
-}    
-  ```
-
+    ```java
+    @Bean
+    @LoadBalanced
+    public CommandLineRunner commandLineRunner(StationsApi stationsApi) {
+        return args -> {
+            System.out.println(stationsApi.getApiClient().getBasePath());
+            stationsApi.getStations().forEach(System.out::println);
+        };
+    }    
+    ```
 1. Rerun for OpenAPI
 
 ## Config Server
