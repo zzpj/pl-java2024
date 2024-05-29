@@ -15,7 +15,7 @@
     * Java: 21
     * Dependencies: Web, Actuator, Lombok
 * [OpenAPI ready examples](https://nordicapis.com/3-example-openapi-definitions/)
-* [OpenAPI file (train-api)]()
+* [OpenAPI file (train-api)](train-api-example.yml)
 
 * Dependencies-config:
     * dependencies:
