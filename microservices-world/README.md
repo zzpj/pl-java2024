@@ -611,4 +611,274 @@ public class TrainTripsOrganizerServiceApplication {
    /{label}/{application}-{profile}.properties
    ```
 
-## Keycloak as authorization server (5.06)
+------
+
+## Keycloak as authorization server
+
+* zip/jar [Instalacja do pobrania](https://www.keycloak.org/downloads)
+* lub [obraz dockerowy](https://quay.io/repository/keycloak/keycloak),
+* [niezbędna dokumentacja](https://www.keycloak.org/guides#getting-started).
+* [krok po kroku jak zacząć](https://www.keycloak.org/getting-started/getting-started-zip)
+
+### Podstawowe pojęcia:
+
+- Realm
+- OAuth
+- User/Role/Client/Federation Provider
+
+### Konfiguracja keycloak'a
+
+1. Pobierz keycloak ze strony i rozpakuj
+1. Otwórz conf/keycloak.conf i dodaj: `http-port=8999`
+1. Uruchom keycloak w powershell: `bin\kc.bat start-dev`
+1. Ustaw kredki dla root admin'a
+1. Przedstaw poszczególne linki
+1. Stwórz:
+    - nowy realm
+        - zakładka _General_
+            - ustaw: Display name
+        - zakładka _Login_
+            - User registration: On
+            - Forgot password: On
+            - Remember me: On
+            - Verify email: Off
+        - zakładka _themes_
+            - wszystko prefiksowane keycloak-
+        - zakładka _Localization_
+            - dodać obsługę języka polskiego
+    - nowego klienta
+        - zakładka _Credentials_
+            - Client Authenticator: client id and secret
+            - wygeneruj `Client secret`
+        - zakładka _Settings_
+            - root url: `http://localhost:8090` (port aplikacji będącej adapterem)
+            - valid redirect urls: `/*`
+            - Client authentication: on
+            - Authorization: on
+            - Login theme: keycloak
+    - nowego użytkownika (pole 'Required user actions' puste) + ew jakieś role
+1. Pobierz token
+    - ogólny url: 'http://localhost:8999/realms/master/.well-known/openid-configuration'
+    ```http request
+    POST http://localhost:8999/realms/master/protocol/openid-connect/token
+    Content-Type: application/x-www-form-urlencoded
+    
+    client_id = train-trip-users-adapter &
+    username = user &
+    password = pass &
+    grant_type = password &
+    client_secret = fDS9jQQXmKPvqcBTplBFQUe3ua2ou44q
+    ```
+
+### Aplikacja adaptera do keycloaka w Springu
+
+1. start.spring.io:
+    - wersja 3.3.0,
+    - zależności: web, oauth2-client, security
+    - Group: com.zzpj
+    - Artifact: TrainTripUsersAdapter
+
+2. plik `application.properties`:
+    ```yaml
+    spring.application.name=TrainTripUsersAdapter
+    server.port=8090
+    
+    spring.security.oauth2.client.registration.keycloak.client-id=<client_id>
+    spring.security.oauth2.client.registration.keycloak.client-secret=<client_secret>
+    spring.security.oauth2.client.registration.keycloak.authorization-grant-type=authorization_code
+    spring.security.oauth2.client.registration.keycloak.scope=openid
+    
+    spring.security.oauth2.client.provider.keycloak.issuer-uri=http://localhost:<port>/realms/<realm_name>
+    ```
+3. klasa `SecurityConfig` - TODO: refactor bo deprecated:
+    ```java
+    @EnableWebSecurity
+    class SecurityConfig {
+    
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests(auth ->
+                    auth.requestMatchers("/external")
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated()
+            );
+            http.oauth2Login(Customizer.withDefaults());
+            return http.build();
+        }
+    }
+    ```
+4. klasa `UserController`:
+    ```java
+    @RestController
+    class UserController {
+    
+        @GetMapping("/internal")
+        public String getSecretInfo() {
+            return "secret info, visible after login...";
+        }
+    
+        @GetMapping("/external")
+        public String getExternalInfo() {
+            return "content visible for all, no login required...";
+        }
+    }
+    ```
+5. Sprawdzenie w przeglądarce:
+    - logowanie+rejestracja: `http://localhost:8090/internal`
+
+### _Github_ Identity Provider
+
+1. W Keycloaku, dodać nowego providera poprzez wybranie z lewego menu "Identity Providers" i wybraniu kafelka z Githubem
+1. Jednocześnie na stronie Githuba, dodać OAuth app [link](https://github.com/settings/developers)
+1. Na stronie Github'a, jako "Authorization callback URL" ustaw URL skopiowany ze strony Keycloaka _Redirect URI_
+1. W keycloaku, uzupełnij _Client ID_ & _Client Secret_ (skopiowany ze strony Github'a)
+1. Zaawansowane ustawienia na _off_, _First login flow_: first broker login
+1. Zapisz i sprawdź: `http://localhost:8090/internal` poprzez logowanie się z kredkami z github'a
+
+
+### Obsługa przy wylogowaniu i usunięcia sesji
+
+1. Stwórz nową klasę `KeycloakLogoutHandler`:
+    ```java
+    @Component
+    public class KeycloakLogoutHandler implements LogoutHandler {
+    
+        private RestTemplate restTemplate;
+    
+        public KeycloakLogoutHandler() {
+            this.restTemplate = new RestTemplate();
+        }
+    
+        @Value("${spring.security.oauth2.client.provider.keycloak.issuer-uri}")
+        private String issuerUrl;
+    
+        @Override
+        public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    
+            String logoutEndpoint = issuerUrl + "/protocol/openid-connect/logout";
+    
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUriString(logoutEndpoint)
+                    .queryParam("id_token_hint", ((OidcUser) authentication.getPrincipal()).getIdToken().getTokenValue());
+    
+            ResponseEntity<String> logoutResponse = new RestTemplateBuilder().build().getForEntity(builder.toUriString(), String.class);
+            if (logoutResponse.getStatusCode().is2xxSuccessful()) {
+                System.out.println("ok");
+            } else {
+                System.out.println("not ok");
+            }
+    
+        }
+    }
+    ```
+2. Uzupełnij `SecurityConfig`:
+    ```java
+    private final KeycloakLogoutHandler keycloakLogoutHandler;
+    
+    public SecurityConfig(KeycloakLogoutHandler keycloakLogoutHandler) {
+        this.keycloakLogoutHandler = keycloakLogoutHandler;
+    }
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    
+        http.authorizeHttpRequests()
+                .requestMatchers("/external").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .oauth2Login()
+                .and()
+                .logout()
+                .addLogoutHandler(keycloakLogoutHandler)
+                .logoutSuccessUrl("/external")
+        ;
+        return http.build();
+    }
+    ```
+
+3. Uzupełnij `UserController`:
+    ```java
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) throws ServletException {
+        request.logout();
+        return "redirect:/";
+     }
+    ```
+4. Login i logout dla user'ów: `http://localhost:8090/logout`
+
+### Keycloak API
+
+1. Zarządzenie użytkownikami
+    - z poziomu panelu admina
+    - indywidualne UI dla każdego user'a
+    ```java
+     @Value("${spring.security.oauth2.client.provider.keycloak.issuer-uri}")
+     private String issuerUrl;
+
+     @GetMapping("/profile")
+     public void profile(HttpServletResponse response)  {
+        response.setHeader("Location", issuerUrl + "/account");
+        response.setStatus(302);
+     }
+    ```
+    - poprzez Keycloak Rest API
+        ```xml
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>21.1.1</version>
+        </dependency>
+        ```
+
+   ```java
+       @Configuration
+       public class KeycloakUserConfig {
+   
+       @Bean
+       Keycloak keycloak() {
+           return KeycloakBuilder.builder()
+                   .serverUrl("http://localhost:8999")
+                   .realm("master")
+                   .clientId("admin-cli")
+                   .grantType(OAuth2Constants.PASSWORD)
+                   .username("admin")
+                   .password("admin")
+                   .build();
+         }
+       }
+   // ----
+   @Component
+   public class KeycloakUserService {
+
+       private static final String EVENT_APP_REALM = "event_app";
+       private final Keycloak keycloak;
+
+       public KeycloakUserService(Keycloak keycloak) {
+           this.keycloak = keycloak;
+       }
+
+       public List<UserRepresentation> findByUsername(String name, boolean exact) {
+           return keycloak.realm(EVENT_APP_REALM)
+                   .users()
+                   .searchByUsername(name, exact);
+       }
+   }
+   ```
+   ```java
+   @RestController
+   public class KeycloakUserController {
+
+       private final KeycloakUserService keycloakUserService;
+
+       public KeycloakUserController(KeycloakUserService keycloakUserService) {
+           this.keycloakUserService = keycloakUserService;
+       }
+
+       @GetMapping("/findUsers/{name}")
+       public List<UserRepresentation> findUsers(@PathVariable("name") String name, @QueryParam("exact") Boolean exact) {
+           return keycloakUserService.findByUsername(name, exact);
+       }
+   }
+   ```
+    - weryfikacja: `http://localhost:8090/findUsers/z?exact=false`
