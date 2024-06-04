@@ -6,13 +6,13 @@
 - mgr inż. Michal Dubel (michal.dubel.500@guest.p.lodz.pl priv: michal.dubel@ttpsc.pl)
 - mgr inż. Zbyszko Natkanski (zbyszko.natkanski.500@guest.p.lodz.pl priv: zbyszkonatkanski@gmail.com)
 
-### Organizacja zajęć:
+### Organizacja zajęć
 
 - Krótki wykład – przedstawienie problemu, rozwiązania lub technologii
 - Live coding
 - Ćwiczenia praktyczne
 
-### Ramowy plan zajęć:
+### Ramowy plan zajęć
 
  Lp | Temat                                       | Data       | Prowadzący | Uwagi                                                                                                  
 ----|---------------------------------------------|------------|------------|-------------------------------------------------------------------------------------------------------- 
@@ -33,7 +33,7 @@
  15 | Final project check                         | 19.06.2024 | ZN+MD+ŁCh  | Zapisy na sloty czasowe są dostępne na platformie WIKAMP                                               
 
 
-### Zaliczenie:
+### Zaliczenie
 
 - Projekt grupowy (3-6 osób)
 - Elementy podlegające ocenie w projekcie grupowym:
