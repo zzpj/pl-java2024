@@ -29,20 +29,14 @@
  11 | Middle project check                        | 22.05.2024 | ZN+MD+ŁCh  | Zapisy na sloty czasowe są dostępne na platformie WIKAMP                                               
  12 | Microservices Basis                         | 29.05.2024 | ZN         |
  13 | Microservices Advanced                      | 5.06.2024  | ZN         |
- 14 | Temat z propozycji                          | 12.06.2024 | .          |
+ 14 | Testy mutacyjne                             | 12.06.2024 | MD         |
  15 | Final project check                         | 19.06.2024 | ZN+MD+ŁCh  | Zapisy na sloty czasowe są dostępne na platformie WIKAMP                                               
 
-### Tematy propozycje:
-
-- Design Patterns
-- Java Profiling
-- JWT + OAuth
-- Event sourcing
 
 ### Zaliczenie:
 
 - Projekt grupowy (3-6 osób)
-- Elementy podlegające ocenie w projekcie grupowym (70% oceny):
+- Elementy podlegające ocenie w projekcie grupowym:
     - Testy
     - Współpraca z Git/Github/CI(wedle uznania, proponowane: Github Actions)/IDE
     - Clean code
@@ -55,7 +49,6 @@
     - ...
     - *UI, UX nie mają znaczenia!*
     - *Unikać typowych aplikacji CRUD*
-- Indywidualna odpowiedź ustna (30% oceny)
 - Aktywność i realizacja zadań z prezentowanego tematu (+0.5 do oceny końcowej)
 
 ### Linki

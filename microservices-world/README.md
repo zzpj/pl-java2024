@@ -745,13 +745,7 @@ public class TrainTripsOrganizerServiceApplication {
 1. Stwórz nową klasę `KeycloakLogoutHandler`:
     ```java
     @Component
-    public class KeycloakLogoutHandler implements LogoutHandler {
-    
-        private RestTemplate restTemplate;
-    
-        public KeycloakLogoutHandler() {
-            this.restTemplate = new RestTemplate();
-        }
+    class KeycloakLogoutHandler implements LogoutHandler {
     
         @Value("${spring.security.oauth2.client.provider.keycloak.issuer-uri}")
         private String issuerUrl;
@@ -759,44 +753,47 @@ public class TrainTripsOrganizerServiceApplication {
         @Override
         public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
     
+            //spring.security.oauth2.client.provider.keycloak.issuer-uri=http://localhost:8080/realms/master
+            //"end_session_endpoint": "http://localhost:8999/realms/master/protocol/openid-connect/logout",
             String logoutEndpoint = issuerUrl + "/protocol/openid-connect/logout";
     
-            UriComponentsBuilder builder = UriComponentsBuilder
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder
                     .fromUriString(logoutEndpoint)
                     .queryParam("id_token_hint", ((OidcUser) authentication.getPrincipal()).getIdToken().getTokenValue());
     
-            ResponseEntity<String> logoutResponse = new RestTemplateBuilder().build().getForEntity(builder.toUriString(), String.class);
-            if (logoutResponse.getStatusCode().is2xxSuccessful()) {
-                System.out.println("ok");
-            } else {
-                System.out.println("not ok");
-            }
+            ResponseEntity<String> logoutEntity = new RestTemplateBuilder()
+                    .build()
+                    .getForEntity(uriBuilder.toUriString(), String.class);
     
+            if (!logoutEntity.getStatusCode().is2xxSuccessful()) {
+                throw new RuntimeException("Logout failed!");
+            }
         }
     }
     ```
 2. Uzupełnij `SecurityConfig`:
     ```java
-    private final KeycloakLogoutHandler keycloakLogoutHandler;
+    @Configuration
+    @EnableWebSecurity
+    class SecurityConfig {
     
-    public SecurityConfig(KeycloakLogoutHandler keycloakLogoutHandler) {
-        this.keycloakLogoutHandler = keycloakLogoutHandler;
-    }
+        @Bean
+        KeycloakLogoutHandler keycloakLogoutHandler() {
+            return new KeycloakLogoutHandler();
+        }
     
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    
-        http.authorizeHttpRequests()
-                .requestMatchers("/external").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .oauth2Login()
-                .and()
-                .logout()
-                .addLogoutHandler(keycloakLogoutHandler)
-                .logoutSuccessUrl("/external")
-        ;
-        return http.build();
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests(auth ->
+                    auth.requestMatchers("/external")
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated()
+            );
+            http.oauth2Login(Customizer.withDefaults());
+            http.logout(logout -> logout.addLogoutHandler(keycloakLogoutHandler()).logoutSuccessUrl("/external"));
+            return http.build();
+        }
     }
     ```
 
@@ -806,82 +803,89 @@ public class TrainTripsOrganizerServiceApplication {
     public String logout(HttpServletRequest request) throws ServletException {
         request.logout();
         return "redirect:/";
-     }
+    }
     ```
 4. Login i logout dla user'ów: `http://localhost:8090/logout`
 
-### Keycloak API
+### Widok profilu dla indywidualnego użytkownikami
 
-1. Zarządzenie użytkownikami
-    - z poziomu panelu admina
-    - indywidualne UI dla każdego user'a
+* z poziomu panelu admina: 
+  * url (zakładka _Clients_): `http://localhost:8999/admin/master/console/#/master/clients`
+  * skopiuj z kolumny _Home URL_: `http://localhost:8999/realms/master/account/`
+* indywidualne UI dla każdego user'a
     ```java
      @Value("${spring.security.oauth2.client.provider.keycloak.issuer-uri}")
      private String issuerUrl;
-
+    
      @GetMapping("/profile")
      public void profile(HttpServletResponse response)  {
         response.setHeader("Location", issuerUrl + "/account");
         response.setStatus(302);
      }
     ```
-    - poprzez Keycloak Rest API
-        ```xml
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId>
-            <version>21.1.1</version>
-        </dependency>
-        ```
 
-   ```java
-       @Configuration
-       public class KeycloakUserConfig {
-   
-       @Bean
-       Keycloak keycloak() {
-           return KeycloakBuilder.builder()
-                   .serverUrl("http://localhost:8999")
-                   .realm("master")
-                   .clientId("admin-cli")
-                   .grantType(OAuth2Constants.PASSWORD)
-                   .username("admin")
-                   .password("admin")
-                   .build();
-         }
-       }
-   // ----
-   @Component
-   public class KeycloakUserService {
+### Keycloak REST API
 
-       private static final String EVENT_APP_REALM = "event_app";
-       private final Keycloak keycloak;
+```xml
+<dependency>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-admin-client</artifactId>
+    <version>21.1.1</version>
+</dependency>
+```
 
-       public KeycloakUserService(Keycloak keycloak) {
-           this.keycloak = keycloak;
-       }
+```java
+@Configuration
+public class KeycloakUserConfig {
 
-       public List<UserRepresentation> findByUsername(String name, boolean exact) {
-           return keycloak.realm(EVENT_APP_REALM)
-                   .users()
-                   .searchByUsername(name, exact);
-       }
-   }
-   ```
-   ```java
-   @RestController
-   public class KeycloakUserController {
+    @Bean
+    Keycloak keycloak() {
+        return KeycloakBuilder.builder()
+                .serverUrl("http://localhost:8999")
+                .realm("master")
+                .clientId("admin-cli")
+                .grantType(OAuth2Constants.PASSWORD)
+                .username("admin")
+                .password("admin")
+                .build();
+    }
+}
+```
 
-       private final KeycloakUserService keycloakUserService;
+```java
+@Component
+public class KeycloakUserService {
 
-       public KeycloakUserController(KeycloakUserService keycloakUserService) {
-           this.keycloakUserService = keycloakUserService;
-       }
+    private static final String EVENT_APP_REALM = "event_app";
+    private final Keycloak keycloak;
 
-       @GetMapping("/findUsers/{name}")
-       public List<UserRepresentation> findUsers(@PathVariable("name") String name, @QueryParam("exact") Boolean exact) {
-           return keycloakUserService.findByUsername(name, exact);
-       }
-   }
-   ```
-    - weryfikacja: `http://localhost:8090/findUsers/z?exact=false`
+    public KeycloakUserService(Keycloak keycloak) {
+        this.keycloak = keycloak;
+    }
+
+    public List<UserRepresentation> findByUsername(String name, boolean exact) {
+        return keycloak.realm(EVENT_APP_REALM)
+                .users()
+                .searchByUsername(name, exact);
+    }
+}
+```
+
+```java
+@RestController
+public class KeycloakUserController {
+
+    private final KeycloakUserService keycloakUserService;
+
+    public KeycloakUserController(KeycloakUserService keycloakUserService) {
+        this.keycloakUserService = keycloakUserService;
+    }
+
+    @GetMapping("/findUsers/{name}")
+    public List<UserRepresentation> findUsers(@PathVariable("name") String name, @QueryParam("exact") Boolean exact) {
+        return keycloakUserService.findByUsername(name, exact);
+    }
+}
+```
+
+Weryfikacja: `http://localhost:8090/findUsers/z?exact=false`
