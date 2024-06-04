@@ -25,7 +25,8 @@
         <artifactId>jackson-databind-nullable</artifactId>
         <version>0.2.6</version>
     </dependency>
-  
+  ```
+  ```xml
     <dependency>
         <groupId>org.springdoc</groupId>
         <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -263,11 +264,14 @@ class BookingService {
     <artifactId>jackson-databind-nullable</artifactId>
     <version>0.2.6</version>
 </dependency>
+```
+
+```xml
 
 <dependency>
-<groupId>org.springdoc</groupId>
-<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-<version>2.5.0</version>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -664,10 +668,10 @@ public class TrainTripsOrganizerServiceApplication {
     Content-Type: application/x-www-form-urlencoded
     
     client_id = train-trip-users-adapter &
-    username = user &
-    password = pass &
+    username = <user> &
+    password = <pass> &
     grant_type = password &
-    client_secret = fDS9jQQXmKPvqcBTplBFQUe3ua2ou44q
+    client_secret = <client_secret>
     ```
 
 ### Aplikacja adaptera do keycloaka w Springu
@@ -734,8 +738,7 @@ public class TrainTripsOrganizerServiceApplication {
 1. Na stronie Github'a, jako "Authorization callback URL" ustaw URL skopiowany ze strony Keycloaka _Redirect URI_
 1. W keycloaku, uzupełnij _Client ID_ & _Client Secret_ (skopiowany ze strony Github'a)
 1. Zaawansowane ustawienia na _off_, _First login flow_: first broker login
-1. Zapisz i sprawdź: `http://localhost:8090/internal` poprzez logowanie się z kredkami z github'a
-
+1. Zapisz i sprawdź: `http://localhost:8090/internal` poprzez logowanie się kredkami z github'a
 
 ### Obsługa przy wylogowaniu i usunięcia sesji
 
