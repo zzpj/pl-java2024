@@ -830,13 +830,19 @@ public class TrainTripsOrganizerServiceApplication {
 <dependency>
     <groupId>org.keycloak</groupId>
     <artifactId>keycloak-admin-client</artifactId>
-    <version>21.1.1</version>
+    <version>24.0.4</version>
 </dependency>
 ```
 
 ```java
-@Configuration
-public class KeycloakUserConfig {
+@SpringBootApplication
+public class TrainTripUsersAdapterApplication {
+
+    private static final Logger log = LoggerFactory.getLogger(TrainTripUsersAdapterApplication.class);
+
+    public static void main(String[] args) {
+        SpringApplication.run(TrainTripUsersAdapterApplication.class, args);
+    }
 
     @Bean
     Keycloak keycloak() {
@@ -846,46 +852,19 @@ public class KeycloakUserConfig {
                 .clientId("admin-cli")
                 .grantType(OAuth2Constants.PASSWORD)
                 .username("admin")
-                .password("admin")
+                .password("<password>")
                 .build();
     }
-}
-```
 
-```java
-@Component
-public class KeycloakUserService {
-
-    private static final String EVENT_APP_REALM = "event_app";
-    private final Keycloak keycloak;
-
-    public KeycloakUserService(Keycloak keycloak) {
-        this.keycloak = keycloak;
-    }
-
-    public List<UserRepresentation> findByUsername(String name, boolean exact) {
-        return keycloak.realm(EVENT_APP_REALM)
-                .users()
-                .searchByUsername(name, exact);
+    @Bean
+    CommandLineRunner commandLineRunner(Keycloak keycloak) {
+        return args -> {
+            List<UserRepresentation> userRepresentations = keycloak.realm("master")
+                    .users()
+                    .search("<user>", false);
+            List<String> list = userRepresentations.stream().map(AbstractUserRepresentation::getUsername).toList();
+            return;
+        };
     }
 }
 ```
-
-```java
-@RestController
-public class KeycloakUserController {
-
-    private final KeycloakUserService keycloakUserService;
-
-    public KeycloakUserController(KeycloakUserService keycloakUserService) {
-        this.keycloakUserService = keycloakUserService;
-    }
-
-    @GetMapping("/findUsers/{name}")
-    public List<UserRepresentation> findUsers(@PathVariable("name") String name, @QueryParam("exact") Boolean exact) {
-        return keycloakUserService.findByUsername(name, exact);
-    }
-}
-```
-
-Weryfikacja: `http://localhost:8090/findUsers/z?exact=false`
