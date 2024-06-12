@@ -2,6 +2,7 @@ package com.example.teeing.event;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class Guest {
     private final String name;
@@ -51,15 +52,10 @@ class EventParticipation {
 public class ParticipationService {
 
     EventParticipation processEventGuests(List<Guest> guests) {
-        // TODO: implement here
-        // return EventParticipation with sum of all participants and names of participants, who will attend
-
-        // TIP
-        // collector1: use Collectors.filtering for filtering ony attend guests,
-        // then collect theirs names to list (use Collectors.mapping)
-        // collector2: return sum of all participants
-
-
-        return new EventParticipation(Collections.emptyList(), 0);
+        return guests.stream().collect(Collectors.teeing(
+                Collectors.filtering(Guest::isParticipating,
+                        Collectors.mapping(Guest::getName, Collectors.toList())),
+                Collectors.summingInt(Guest::getParticipantsNumber),
+                EventParticipation::new));
     }
 }

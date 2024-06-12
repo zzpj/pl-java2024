@@ -1,24 +1,27 @@
 package com.example.stringMethods;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StringService {
 
     List<String> getOnlyNotBlankStrings(List<String> input) {
-        // TODO: implement here
-
-        return input;
+        var strings = input.stream();
+        strings = strings.filter(n -> !n.isBlank());
+        return strings.collect(Collectors.toList());
     }
 
     List<String> getStrippedTextLines(String text) {
-        // TODO: implement here
-        // split text to lines and strip
-        return null;
+        return text.lines().map(String::strip).toList();
     }
 
     List<String> extendFoundStringByRepeatSomeTimes(List<String> list, String searchedText, int nTimesRepeat) {
-        // TODO: implement here
-        // search for searchedText in a list. Change this string by repeat n times if found
-        return list;
+        return list.stream().map(string -> {
+            if (string.equals(searchedText)) {
+                return string.repeat(nTimesRepeat);
+            } else {
+                return string;
+            }
+        }).toList();
     }
 }

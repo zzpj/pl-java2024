@@ -1,4 +1,4 @@
 package com.example.sealed;
 
-public class Animal {
+public sealed class Animal permits Reptile, Mammal{
 }
