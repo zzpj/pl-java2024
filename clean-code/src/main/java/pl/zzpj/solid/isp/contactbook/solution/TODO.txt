@@ -1,3 +1,0 @@
-Klasa Contact ma dwie własności, jedna z nich przedstawia możliwośc kontaktowania się przez wiadomość email,
-a druga to kontakt telefoniczny. Zaleca się wyróżnienie tych własności za pomocą interfejsów.
-Te interfejsy deklarują metody charakterystyczne dla danej własności

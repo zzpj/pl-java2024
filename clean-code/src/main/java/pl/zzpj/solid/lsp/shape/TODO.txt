@@ -1,3 +1,0 @@
-Podstawowym przykładem obrazującym zasadę Barbary Liskov jest zbudowanie aplikacji, która będzie obrazowała
-podstawowe figury geometryczne: kwadrat, prostokąd, koło... wraz z obliczaniem ich obwodu oraz pola powierzchni.
- Czy z punktu widzenia programisty i programowania obiektowego kwadrat jest prostokątem?
